@@ -298,6 +298,8 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 				{
 					// if so, download cache details
 					monitor.subTask("Downloading " + cache.getCacheCode());
+					try
+					{
 					cache.populate(login, false);
 					// check if we fulfill post-download criteria
 					if (checkPostDownload(cache))
@@ -319,13 +321,15 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 							}
 						}
 					}
+					}
+					catch(Exception e)
+					{
+						System.out.println("Problem with cache " + cache.getCacheCode());
+						e.printStackTrace();
+					}
 					monitor.subTask("Found " + caches.size() + " matching caches.");
 				}
-				catch (IOException e)
-				{
-					e.printStackTrace();
-				}
-				catch (ParseException e)
+				catch (Exception e)
 				{
 					e.printStackTrace();
 				}

@@ -240,10 +240,15 @@ public class GpxWriter
 				putElement(hd, "groundspeak:type", log.getLogType().getText());
 				atts.clear();
 
-				// atts.addAttribute("", "", "id", "",
-				// Long.toString(idManager.getId(log.getLoggedBy())));
-				// loading the IDs takes way too long, just use blank id.
-				atts.addAttribute("", "", "id", "", "");
+				if(log.getLoggedBy().getId()!=null)
+				{
+					atts.addAttribute("", "", "id", "", Long.toString(log.getLoggedBy().getId()));
+					idManager.setId(log.getLoggedBy(),log.getLoggedBy().getId());
+				}
+				else
+				{
+					atts.addAttribute("", "", "id", "", "");
+				}
 
 				putElement(hd, "groundspeak:finder", log.getLoggedBy().getName(), atts);
 				atts.clear();

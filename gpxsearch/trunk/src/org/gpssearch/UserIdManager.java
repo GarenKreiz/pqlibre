@@ -82,4 +82,13 @@ public class UserIdManager
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * @param loggedBy
+	 * @param id
+	 */
+	public void setId(Cacher loggedBy, Long id)
+	{
+		userIds.put(loggedBy.getProfilePage(), id);		
+	}
 }
