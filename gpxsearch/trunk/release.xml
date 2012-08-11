@@ -3,6 +3,7 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
 	<!-- if you want to build PQ Libre with other versions of the dependencies than what is listed here you must edit this file. -->
+	<property name="build.version" value="0.1"/>
     <target name="create_run_jar">
         <jar destfile="build/pqlibre.jar">
             <manifest>
@@ -35,33 +36,33 @@
         </jar>
     	<!-- create the various distributions by adding the relevant swt.jar file -->
     	<!-- 32-bit Windows -->
-    	<copy file="build/pqlibre.jar" tofile="build/pqlibre-win32.jar" overwrite="true"/>
+    	<copy file="build/pqlibre.jar" tofile="build/pqlibre${build.version}-win32.jar" overwrite="true"/>
     	<unzip src="libs/swt-4.2-win32-win32-x86.zip" dest="libs/tmp/"/>
-    	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre-win32.jar"/>
+    	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre${build.version}-win32.jar"/>
     	<delete dir="libs/tmp/"/>
     	
     	<!-- 64-bit Windows-->
-    	<copy file="build/pqlibre.jar" tofile="build/pqlibre-win64.jar" overwrite="true"/>
+    	<copy file="build/pqlibre.jar" tofile="build/pqlibre${build.version}-win64.jar" overwrite="true"/>
     	<unzip src="libs/swt-4.2-win32-win32-x86_64.zip" dest="libs/tmp/"/>
-    	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre-win64.jar"/>
+    	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre${build.version}-win64.jar"/>
     	<delete dir="libs/tmp/"/>
     	
     	<!-- 32-bit Linux -->
-    	<copy file="build/pqlibre.jar" tofile="build/pqlibre-linux32.jar" overwrite="true"/>
+    	<copy file="build/pqlibre.jar" tofile="build/pqlibre${build.version}-linux32.jar" overwrite="true"/>
     	<unzip src="libs/swt-4.2-gtk-linux-x86.zip" dest="libs/tmp/"/>
-    	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre-linux32.jar"/>
+    	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre${build.version}-linux32.jar"/>
     	<delete dir="libs/tmp/"/>
     	
     	<!-- 64-bit Linux -->
-    	<copy file="build/pqlibre.jar" tofile="build/pqlibre-linux64.jar" overwrite="true"/>
+    	<copy file="build/pqlibre.jar" tofile="build/pqlibre${build.version}-linux64.jar" overwrite="true"/>
     	<unzip src="libs/swt-4.2-gtk-linux-x86_64.zip" dest="libs/tmp/"/>
-    	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre-linux64.jar"/>
+    	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre${build.version}-linux64.jar"/>
     	<delete dir="libs/tmp/"/>
     	
     	<!-- PowerPC Linux -->
-    	<copy file="build/pqlibre.jar" tofile="build/pqlibre-linuxppc.jar" overwrite="true"/>
+    	<copy file="build/pqlibre.jar" tofile="build/pqlibre${build.version}-linuxppc.jar" overwrite="true"/>
     	<unzip src="libs/swt-4.2-gtk-linux-ppc64.zip" dest="libs/tmp/"/>
-    	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre-linuxppc.jar"/>
+    	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre${build.version}-linuxppc.jar"/>
     	<delete dir="libs/tmp/"/>
     </target>
 </project>
