@@ -1,0 +1,34 @@
+#summary How to use PQ Libre.
+#labels HOWTO,Tutorial
+
+= Introduction =
+
+PQ Libre is a tool for generating Pocket Queries, just like the ones you get from geocaching.com.
+
+This page will tell you how to get started.
+
+
+= Installation =
+
+  # Install Java. You can get it for free [http://java.com here].
+  # Download the correct binary file for your operating system from the [http://code.google.com/p/pqlibre/downloads/list Downloads] page.
+  # That's it.
+
+= Usage =
+  # Go to the folder where you saved the downloaded file, and double-click on it.
+  # This should open the login dialog. 
+  # Enter your geocaching.com username and password, then press "Login".
+  # After a few seconds the main dialog will open, here you can specify your search parameters.  
+  # Press "Search" and wait.
+  # When the search is complete you select where you want to save your .gpx file.
+  # Done!
+
+= Troubleshooting =
+  * Q: When I double-click the file I don't get a login dialog, I get a list of files.
+   A: Try right-clicking on the file, select open-with and specify Java.
+
+  * Q: When I double-click the file nothing happens.
+   A: You don't have Java installed or you have the wrong version of the file. This often happens if you are running 32-bit Java on 64-bit Windows. Try installing 64-bit Java and downloading the 64-bit binary.
+
+  * Q: The program crashed or did something else unexpected.
+   A: There are still bugs. Please help us help you by submitting a bug report using the [http://code.google.com/p/pqlibre/issues/list "Issues"] link, above.
