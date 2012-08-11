@@ -25,10 +25,10 @@ This page will tell you how to get started.
 
 = Troubleshooting =
   * Q: When I double-click the file I don't get a login dialog, I get a list of files.
-   A: Try right-clicking on the file, select open-with and specify Java.
+   A: Try right-clicking on the file, select open-with and specify Java. If you are using Windows you might want to try running [http://johann.loefflmann.net/en/software/jarfix/ JarFIX]  instead.
 
   * Q: When I double-click the file nothing happens.
-   A: You don't have Java installed or you have the wrong version of the file. This often happens if you are running 32-bit Java on 64-bit Windows. Try installing 64-bit Java and downloading the 64-bit binary.
+   A: You don't have Java installed or you have the wrong version of the file. This often happens if you are running 32-bit Java on 64-bit Windows. Try installing 64-bit Java, downloading the 64-bit binary, then running [http://johann.loefflmann.net/en/software/jarfix/ JarFIX].
 
   * Q: The program crashed or did something else unexpected.
    A: There are still bugs. Please help us help you by submitting a bug report using the [http://code.google.com/p/pqlibre/issues/list "Issues"] link, above.
