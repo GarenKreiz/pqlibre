@@ -1,5 +1,5 @@
 #summary How to use PQ Libre.
-#labels HOWTO,Tutorial
+#labels HOWTO,Tutorial,Featured
 
 = Introduction =
 
