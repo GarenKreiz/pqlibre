@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.geoscrape.Attribute;
 import org.geoscrape.Cache;
+import org.geoscrape.CacheLog;
 import org.geoscrape.CacheSize;
 import org.geoscrape.CacheType;
 import org.geoscrape.ListSearcher;
@@ -306,8 +307,6 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 					{
 						// if so, save cache to list
 						caches.add(cache);
-						// and load the user id for the cache
-						idManager.getId(cache.getHider());
 						if (maxFind > 0 && caches.size() > maxFind)
 						{
 							searcher.abort();
@@ -320,6 +319,16 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 								//just loop until we run out of logs
 							}
 						}
+						//put all id logs in cache
+						for (CacheLog log : cache.getLogs())
+						{
+							if(log.getLoggedBy().getId()!=null)
+							{
+								idManager.setId(log.getLoggedBy(),log.getLoggedBy().getId());
+							}
+						}
+						// and load the user id for the cache
+						idManager.getId(cache.getHider());
 					}
 					}
 					catch(Exception e)

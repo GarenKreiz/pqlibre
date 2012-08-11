@@ -12,6 +12,7 @@ import java.io.InputStream;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -67,7 +68,7 @@ public class Exporter
 			}
 			while (!loggedin)
 			{
-				LoginDialog dialog = new LoginDialog(shell, 0);
+				LoginDialog dialog = new LoginDialog(shell);
 				dialog.setUsername(loadUsername());
 				dialog.setPassword(loadPassword());
 				dialog.setRemember(loadSaveCredentials());

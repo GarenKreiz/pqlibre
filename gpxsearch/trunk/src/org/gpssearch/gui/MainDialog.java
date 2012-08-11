@@ -148,7 +148,8 @@ public class MainDialog extends Dialog
 	protected void configureShell(Shell shell)
 	{
 		super.configureShell(shell);
-		shell.setText("Pocket Query exporter");
+		shell.setText("Pocket Query Libre");
+		shell.setImages(getParentShell().getImages());
 	}
 
 	/**
@@ -527,7 +528,7 @@ public class MainDialog extends Dialog
 		});
 		btnNewButton.setBounds(284, 28, 124, 24);
 		btnNewButton.setText("Use home location");
-		
+
 		btnIncludeLogs = new Button(container, SWT.CHECK);
 		btnIncludeLogs.setBounds(10, 575, 173, 26);
 		btnIncludeLogs.setText("Include logs in output");
@@ -675,6 +676,15 @@ public class MainDialog extends Dialog
 		if (btnFilterType != null)
 		{
 			ableAll(typeGroup, btnFilterType.getSelection());
+		}
+		// if the location area is not set, fill it with something
+		if (locationInput != null && (locationInput.getText() == null || locationInput.getText().length() == 0))
+		{
+			if (login.getHomeLocation() != null)
+			{
+				String homeLocText = login.getHomeLocation().toString();
+				locationInput.setText(homeLocText);
+			}
 		}
 	}
 

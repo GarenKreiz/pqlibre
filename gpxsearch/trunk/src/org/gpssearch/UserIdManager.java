@@ -12,16 +12,18 @@ import org.geoscrape.Cacher;
 import org.geoscrape.Login;
 
 /**
- * This class keeps track of the userids of named cachers. 
- * Persistent storage in the user's homedir.
+ * This class keeps track of the userids of named cachers. Persistent storage in
+ * the user's homedir.
  */
 public class UserIdManager
 {
 
-	private static final String ID_DATABASE_FILENAME = System.getProperty("user.home") + File.separator + ".gpxexporter.id.db";
+	private static final String ID_DATABASE_FILENAME = System.getProperty("user.home") + File.separator
+			+ ".gpxexporter.id.db";
 	private HashMap<String, Long> userIds;
+	private HashMap<String, Long> userNames;
 	private Login login;
-	
+
 	public UserIdManager(Login login)
 	{
 		this.login = login;
@@ -29,19 +31,38 @@ public class UserIdManager
 
 	public Long getId(Cacher cacher) throws IOException
 	{
+		Long res = null;
 		// check cache for id
-		Long res = userIds.get(cacher.getProfilePage());
+		if (cacher.getProfilePage() != null)
+		{
+			res = userIds.get(cacher.getProfilePage());
+		}
 		if (res == null)
 		{
-			// find the id
-			System.out.println("Getting id for user " + cacher.getName());
-			cacher.populate(login);
-			// store it
-			res = cacher.getId();
-			userIds.put(cacher.getProfilePage(), res);
+			if (cacher.getName() != null)
+			{
+				res = userNames.get(cacher.getName());
+			}
+			if (res == null)
+			{
+				// find the id
+				System.out.println("Getting id for user " + cacher.getName());
+				cacher.populate(login);
+				// store it
+				res = cacher.getId();
+				if (cacher.getProfilePage() != null)
+				{
+					userIds.put(cacher.getProfilePage(), res);
+				}
+				if (cacher.getName() != null)
+				{
+					userNames.put(cacher.getName(), res);
+				}
+			}
 		}
 		return res;
 	}
+
 	@SuppressWarnings("unchecked")
 	public void loadDb() throws ClassNotFoundException
 	{
@@ -52,6 +73,7 @@ public class UserIdManager
 			{
 				ObjectInputStream ois = new ObjectInputStream(new FileInputStream(f));
 				userIds = (HashMap<String, Long>) ois.readObject();
+				userNames = (HashMap<String, Long>) ois.readObject();
 				ois.close();
 			}
 		}
@@ -66,15 +88,20 @@ public class UserIdManager
 			{
 				userIds = new HashMap<String, Long>();
 			}
+			if (userNames == null)
+			{
+				userNames = new HashMap<String, Long>();
+			}
 		}
 	}
+
 	public void saveDb()
 	{
 		try
 		{
-			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(
-					ID_DATABASE_FILENAME, false));
+			ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ID_DATABASE_FILENAME, false));
 			oos.writeObject(userIds);
+			oos.writeObject(userNames);
 			oos.close();
 		}
 		catch (IOException e)
@@ -84,11 +111,18 @@ public class UserIdManager
 	}
 
 	/**
-	 * @param loggedBy
+	 * @param c
 	 * @param id
 	 */
-	public void setId(Cacher loggedBy, Long id)
+	public void setId(Cacher c, Long id)
 	{
-		userIds.put(loggedBy.getProfilePage(), id);		
+		if (c.getProfilePage() != null)
+		{
+			userIds.put(c.getProfilePage(), id);
+		}
+		if (c.getName() != null)
+		{
+			userNames.put(c.getName(), id);
+		}
 	}
 }

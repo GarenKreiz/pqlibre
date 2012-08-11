@@ -189,6 +189,17 @@ public class GpxWriter
 			putElement(hd, "groundspeak:name", c.getName());
 			putElement(hd, "groundspeak:placed_by", c.getHider().getName());
 			atts.clear();
+			
+			//put all the log ids in the idmanager database before checking
+
+			for (CacheLog log : c.getLogs())
+			{
+				if(log.getLoggedBy().getId()!=null)
+				{
+					idManager.setId(log.getLoggedBy(),log.getLoggedBy().getId());
+				}
+			}
+			
 			atts.addAttribute("", "", "id", "", Long.toString(idManager.getId(c.getHider())));
 			putElement(hd, "groundspeak:owner", c.getHider().getName(), atts);
 			putElement(hd, "groundspeak:type", cacheType);
@@ -243,7 +254,6 @@ public class GpxWriter
 				if(log.getLoggedBy().getId()!=null)
 				{
 					atts.addAttribute("", "", "id", "", Long.toString(log.getLoggedBy().getId()));
-					idManager.setId(log.getLoggedBy(),log.getLoggedBy().getId());
 				}
 				else
 				{

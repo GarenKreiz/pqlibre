@@ -10,6 +10,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.ui.keys.Key;
 
 /**
  * A simple dialog that lets users enter login information.
@@ -35,7 +38,7 @@ public class LoginDialog extends Dialog
 	 * @param parent
 	 * @param style
 	 */
-	public LoginDialog(Shell parent, int style)
+	public LoginDialog(Shell parent)
 	{
 		super(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		setText("Geocaching.com login");
@@ -78,6 +81,22 @@ public class LoginDialog extends Dialog
 		lblUsername.setText("Username:");
 
 		usernameField = new Text(shell, SWT.BORDER);
+		usernameField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.keyCode == SWT.CR)
+				{
+					//enter was pressed, go to password field
+					shell.getDisplay().asyncExec(new Runnable()
+					{
+						public void run()
+						{
+							passwordField.setFocus();
+						}
+					});
+				}
+			}
+		});
 		usernameField.setBounds(10, 50, 212, 21);
 		if (username != null)
 		{
@@ -89,6 +108,26 @@ public class LoginDialog extends Dialog
 		lblPassword.setText("Password:");
 
 		passwordField = new Text(shell, SWT.BORDER | SWT.PASSWORD);
+		passwordField.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if(e.keyCode == SWT.CR)
+				{
+					//enter was pressed, try logging in
+					shell.getDisplay().asyncExec(new Runnable()
+					{
+						public void run()
+						{
+							remember = checkboxRemember.getSelection();
+							password = passwordField.getText();
+							username = usernameField.getText();
+							doLogin = true;
+							shell.close();
+						}
+					});
+				}
+			}
+		});
 		passwordField.setBounds(10, 107, 212, 21);
 		if (password != null)
 		{
