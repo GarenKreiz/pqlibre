@@ -1,18 +1,24 @@
 #summary Frequently Asked Questions
 #labels Featured,FAQ
 
-= Rationale =
+= General =
 
-  Q: Does this program violate the Groundspeak Terms Of Service (TOS)?     
-   A: Probably. So does [http://cgeo.org/ c:geo], nobody cares.
+  __*Q*: Does this program violate the Groundspeak Terms Of Service (TOS)?     
+   __*A*: Probably. So does [http://cgeo.org/ c:geo], nobody cares.
 
-  Q: Why are you doing this? 
-   A: Groundspeak did not invent geocaching. The sport was invented by Dave Ulmer, who placed the first cache, and Mike Teague, who created the first online database of caches, and Matt Stum, who coined the word "geocaching". Mike Teague's database was given, free of charge, to Groundspeak. Groundspeak does not create caches. Groundspeak does not review caches. All the work of creating, maintaining, and reviewing caches is done by unpaid volunteers.  Meanwhile, they have a near-monopoly on cache listings and trackable sales, in addition to branded merchandise and subscriptions. Those that want to cache on a smartphone must buy the official app or use apps that pay Groundpseak to use the official API. The restrictive license on the API [http://faq.cgeo.org/#1_21 excludes open-source developers.] In short, Groundspeak has greedily taken over geocaching and are putting their own profits ahead of the good of the sport. Therefore we do no longer feel bound by their TOS.
+  __*Q*: Why are you doing this? 
+   __*A*: Groundspeak did not invent geocaching. The sport was invented by Dave Ulmer, who placed the first cache, and Mike Teague, who created the first online database of caches, and Matt Stum, who coined the word "geocaching". Mike Teague's database was given, free of charge, to Groundspeak. Groundspeak does not create caches. Groundspeak does not review caches. All the work of creating, maintaining, and reviewing caches is done by unpaid volunteers.  Meanwhile, they have a near-monopoly on cache listings and trackable sales, in addition to branded merchandise and subscriptions. Those that want to cache on a smartphone must buy the official app or use apps that pay Groundpseak to use the official API. The restrictive license on the API [http://faq.cgeo.org/#1_21 excludes open-source developers.] In short, Groundspeak has greedily taken over geocaching and are putting their own profits ahead of the good of the sport. Therefore we do no longer feel bound by their TOS.
 
-   Q: Are you making money from this?
-    A: No. PQ Libre is free, and always will be. 
+   __*Q*: Are you making money from this?
+    __*A*: No. PQ Libre is free, and always will be. 
 
 = Technical =
 
-  Q: Does this use a lot of bandwidth?
-   A: PQ Libre has been optimised to use as little bandwidth as possible.
+  __*Q*: Does this use a lot of bandwidth?
+   __*A*: PQ Libre has been optimised to use as little bandwidth as possible.
+
+  __*Q*: I have a great idea for a feature you should include!
+   __*A*: Great! Drop us an email or create a feature request using the "Issues" tab. Describe your idea in as much detail as possible. Feel free to send us an image if you think that helps.
+
+  __*Q*: It's not working! 
+   __*A*: Sorry to hear that. Please email us or, even better, create a bug report using the "Issues" tab. When you do, please describe the problem in as great detail as possible. Include information about what OS you are using, what version of the OS, and what version of Java you are using. Describe the exact steps you followed to produce the problem, and exactly what happens when you encounter the problem. The more detail you include, the faster we can fix the problem. Thanks!
