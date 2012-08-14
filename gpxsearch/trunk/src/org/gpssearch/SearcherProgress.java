@@ -62,8 +62,8 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 	private boolean checkType;
 	private List<String> acceptedTypes = new ArrayList<String>();
 	private boolean checkAttributes;
-	private List<Attribute> excludedAttributes;
-	private List<Attribute> includedAttributes;
+	private List<Attribute> excludedAttributes = new ArrayList<Attribute>();
+	private List<Attribute> includedAttributes = new ArrayList<Attribute>();
 	private UserIdManager idManager;
 	
 	//format options
@@ -307,7 +307,7 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 					{
 						// if so, save cache to list
 						caches.add(cache);
-						if (maxFind > 0 && caches.size() > maxFind)
+						if (maxFind > 0 && caches.size() >= maxFind)
 						{
 							searcher.abort();
 						}

@@ -530,8 +530,8 @@ public class MainDialog extends Dialog
 		btnNewButton.setText("Use home location");
 
 		btnIncludeLogs = new Button(container, SWT.CHECK);
-		btnIncludeLogs.setBounds(10, 575, 173, 26);
-		btnIncludeLogs.setText("Include logs in output");
+		btnIncludeLogs.setBounds(10, 575, 196, 26);
+		btnIncludeLogs.setText("Include full logs in output");
 
 		applyProperties();
 		return container;
