@@ -22,3 +22,7 @@
 
   __*Q*: It's not working! 
    __*A*: Sorry to hear that. Please email us or, even better, create a bug report using the "Issues" tab. When you do, please describe the problem in as great detail as possible. Include information about what OS you are using, what version of the OS, and what version of Java you are using. Describe the exact steps you followed to produce the problem, and exactly what happens when you encounter the problem. The more detail you include, the faster we can fix the problem. Thanks!
+
+
+  __*Q*: How do I make it as easy as possible for you to fix the bug I discovered?
+   __*A*: By emailing us the `.gpxexporter.properties` file you can find in your home directory.
