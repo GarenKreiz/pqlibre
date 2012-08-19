@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -38,7 +37,6 @@ import org.geoscrape.Cache;
 import org.geoscrape.ListSearcher;
 import org.geoscrape.Location;
 import org.geoscrape.Login;
-import org.gpssearch.GpxWriter;
 import org.gpssearch.SearcherProgress;
 import org.gpssearch.UserIdManager;
 
@@ -818,25 +816,8 @@ public class MainDialog extends Dialog
 					ProgressMonitorDialog progdialog = new ProgressMonitorDialog(getShell());
 					progdialog.run(true, true, progr);
 					List<Cache> caches = progr.getCaches();
-
-					// Generate GPX, ask user to save it
-					GpxWriter writer = new GpxWriter(caches, idManager);
-
-					FileDialog fileDialog = new FileDialog(getShell(), SWT.SAVE);
-					fileDialog.setText("Save .gpx file");
-					fileDialog.setOverwrite(true);
-					String[] filterExt = { "*.gpx" };
-					fileDialog.setFilterExtensions(filterExt);
-					String outputName = fileDialog.open();
-					if (outputName != null)
-					{
-						if (!outputName.toLowerCase().endsWith(".gpx"))
-						{
-							outputName += ".gpx";
-						}
-						writer.write(outputName);
-					}
-					idManager.saveDb();
+					ResultDialog resDiag = new ResultDialog(getShell(), SWT.APPLICATION_MODAL);
+					resDiag.open(caches,idManager);
 				}
 				catch (InvocationTargetException ex)
 				{

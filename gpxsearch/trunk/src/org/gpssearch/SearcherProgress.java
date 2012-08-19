@@ -65,8 +65,8 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 	private List<Attribute> excludedAttributes = new ArrayList<Attribute>();
 	private List<Attribute> includedAttributes = new ArrayList<Attribute>();
 	private UserIdManager idManager;
-	
-	//format options
+
+	// format options
 	private boolean includeLogs;
 
 	public SearcherProgress(ListSearcher search, Login login, UserIdManager man, Properties props)
@@ -263,7 +263,7 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 				}
 			}
 		}
-		
+
 		includeLogs = Boolean.parseBoolean(properties.getProperty("btnIncludeLogs"));
 	}
 
@@ -301,37 +301,37 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 					monitor.subTask("Downloading " + cache.getCacheCode());
 					try
 					{
-					cache.populate(login, false);
-					// check if we fulfill post-download criteria
-					if (checkPostDownload(cache))
-					{
-						// if so, save cache to list
-						caches.add(cache);
-						if (maxFind > 0 && caches.size() >= maxFind)
+						cache.populate(login, false);
+						// check if we fulfil post-download criteria
+						if (checkPostDownload(cache))
 						{
-							searcher.abort();
-						}
-						if(includeLogs)
-						{
-							//get the full logs
-							while(cache.retrieveMoreLogs(login))
+							// if so, save cache to list
+							caches.add(cache);
+							if (maxFind > 0 && caches.size() >= maxFind)
 							{
-								//just loop until we run out of logs
+								searcher.abort();
 							}
-						}
-						//put all id logs in cache
-						for (CacheLog log : cache.getLogs())
-						{
-							if(log.getLoggedBy().getId()!=null)
+							if (includeLogs)
 							{
-								idManager.setId(log.getLoggedBy(),log.getLoggedBy().getId());
+								// get the full logs
+								while (cache.retrieveMoreLogs(login))
+								{
+									// just loop until we run out of logs
+								}
 							}
+							// put all id logs in cache
+							for (CacheLog log : cache.getLogs())
+							{
+								if (log.getLoggedBy().getId() != null)
+								{
+									idManager.setId(log.getLoggedBy(), log.getLoggedBy().getId());
+								}
+							}
+							// and load the user id for the cache
+							idManager.getId(cache.getHider());
 						}
-						// and load the user id for the cache
-						idManager.getId(cache.getHider());
 					}
-					}
-					catch(Exception e)
+					catch (Exception e)
 					{
 						System.out.println("Problem with cache " + cache.getCacheCode());
 						e.printStackTrace();
@@ -435,6 +435,24 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 			if (!this.acceptedTypes.contains(type))
 			{
 				return false;
+			}
+		}
+		// check if the "needs maintenance" attribute is checked for
+		if (checkAttributes)
+		{
+			if (this.excludedAttributes.contains(Attribute.NEEDS_MAINTENANCE))
+			{
+				if (cache.getAttributes().contains(Attribute.NEEDS_MAINTENANCE))
+				{
+					return false;
+				}
+			}
+			if (this.includedAttributes.contains(Attribute.NEEDS_MAINTENANCE))
+			{
+				if (!cache.getAttributes().contains(Attribute.NEEDS_MAINTENANCE))
+				{
+					return false;
+				}
 			}
 		}
 		if (checkDT || checkSize)
