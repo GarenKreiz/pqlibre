@@ -321,7 +321,7 @@ public class ResultDialog extends Dialog
 	 */
 	private String getIconUrlString(CacheType cacheType)
 	{
-		StringBuilder res = new StringBuilder("http://www.geocaching.com/images/wpttypes/sm/");
+		StringBuilder res = new StringBuilder("http://geocaching.com/images/wpttypes/sm/");
 		res.append(getId(cacheType));
 		res.append(".gif");
 		return res.toString();
