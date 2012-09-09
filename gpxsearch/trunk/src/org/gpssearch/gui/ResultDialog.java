@@ -228,7 +228,7 @@ public class ResultDialog extends Dialog
 		{
 			String newline = URLEncoder.encode("\n", "UTF-8");
 			StringBuilder url = new StringBuilder(
-					"http://www.gpsvisualizer.com/map_input?data=name,description,latitude,longitude,icon_size,symbol");
+					"http://www.gpsvisualizer.com/map_input?data=name,desc,lat,lon,icon_size,sym");
 			int count = 0;
 			for (Cache c : caches)
 			{
@@ -251,9 +251,9 @@ public class ResultDialog extends Dialog
 				tmp.append(escape(desc.toString()));
 				tmp.append(",");
 				Location loc = c.getLocation();
-				tmp.append(loc.getLatitude().toDecimalString());
+				tmp.append(shortify(loc.getLatitude().toDecimalString()));
 				tmp.append(",");
-				tmp.append(loc.getLongitude().toDecimalString());
+				tmp.append(shortify(loc.getLongitude().toDecimalString()));
 				tmp.append(",16x16,");
 				tmp.append(getIconUrlString(c.getCacheType()));
 				if(url.length()+tmp.length()>=URI_SIZE_LIMIT)
@@ -275,6 +275,44 @@ public class ResultDialog extends Dialog
 		{
 			e1.printStackTrace();
 		}
+	}
+
+	/**
+	 * Round decimal number to five digits after decimal point.
+	 * 
+	 * 
+	 * @param decimalString
+	 * @return
+	 */
+	private Object shortify(String decimalString)
+	{
+		String res = decimalString;
+		int pointIndex = res.indexOf(".");
+		if(pointIndex>=0)
+		{
+			int digits = res.length()-pointIndex-1;
+			if(digits>5)
+			{
+				//get the last six digits
+				String sub = res.substring(0,pointIndex+7);
+				//round 
+				double d = Double.parseDouble(sub);
+				d=Math.round(d*100000.0)/100000.0;
+				//convert to string
+				res = Double.toString(d);
+				//get string to last 5 digits
+				pointIndex = res.indexOf(".");
+				if(pointIndex>=0)
+				{
+					digits = res.length()-pointIndex-1;
+					if(digits>5)
+					{
+						res=res.substring(0,pointIndex+6);
+					}
+				}
+			}
+		}
+		return res;	
 	}
 
 	/**
