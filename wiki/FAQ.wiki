@@ -3,11 +3,8 @@
 
 = General =
 
-  __*Q*: Does this program violate the Groundspeak Terms Of Service (TOS)?     
-   __*A*: Probably. So does [http://cgeo.org/ c:geo], nobody cares.
-
   __*Q*: Why are you doing this? 
-   __*A*: Groundspeak did not invent geocaching. The sport was invented by Dave Ulmer, who placed the first cache, and Mike Teague, who created the first online database of caches, and Matt Stum, who coined the word "geocaching". Mike Teague's database was given, free of charge, to Groundspeak. Groundspeak does not create caches. Groundspeak does not review caches. All the work of creating, maintaining, and reviewing caches is done by unpaid volunteers.  Meanwhile, they have a near-monopoly on cache listings and trackable sales, in addition to branded merchandise and subscriptions. Those that want to cache on a smartphone must buy the official app or use apps that pay Groundpseak to use the official API. The restrictive license on the API [http://faq.cgeo.org/#1_21 excludes open-source developers.] In short, Groundspeak has greedily taken over geocaching and are putting their own profits ahead of the good of the sport. Therefore we do no longer feel bound by their TOS.
+   __*A*: Groundspeak did not invent geocaching. The sport was invented by Dave Ulmer, who placed the first cache, and Mike Teague, who created the first online database of caches, and Matt Stum, who coined the word "geocaching". Mike Teague's database was given, free of charge, to Groundspeak. Groundspeak does not create caches. Groundspeak does not review caches. All the work of creating, maintaining, and reviewing caches is done by unpaid volunteers.  Meanwhile, they have a near-monopoly on cache listings and trackable sales, in addition to branded merchandise and subscriptions. Those that want to cache on a smartphone must buy the official app or use apps that pay Groundpseak to use the official API. The restrictive license on the API [http://faq.cgeo.org/#1_21 excludes open-source developers.] In short, Groundspeak has greedily taken over geocaching and are putting their own profits ahead of the good of the sport. 
 
    __*Q*: Are you making money from this?
     __*A*: No. PQ Libre is free, and always will be. 
