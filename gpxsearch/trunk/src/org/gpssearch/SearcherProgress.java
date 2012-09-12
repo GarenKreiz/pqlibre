@@ -503,7 +503,11 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 		Location loc = new Location(properties.getProperty("locationInput"));
 		double radius = Double.parseDouble(properties.getProperty("searchradius")) / 10.0;
 		// convert miles to km if we need to
-		boolean useMiles = properties.getProperty("searchRadiusUnits").equals("1");
+		boolean useMiles = false;
+		if(properties.getProperty("searchRadiusUnits")!=null && properties.getProperty("searchRadiusUnits").equals("1"))
+		{
+			useMiles = true;
+		}
 		if (useMiles)
 		{
 			radius *= 1.609344;
