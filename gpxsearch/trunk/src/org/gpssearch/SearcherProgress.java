@@ -3,6 +3,7 @@ package org.gpssearch;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -23,7 +24,6 @@ import org.geoscrape.Location;
 import org.geoscrape.Login;
 import org.geoscrape.SearchCallback;
 
-import com.ibm.icu.text.SimpleDateFormat;
 
 /**
  * Keep track of the search progress, display info to the user and filter

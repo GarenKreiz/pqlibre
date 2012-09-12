@@ -10,7 +10,7 @@
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
                 <attribute name="Rsrc-Main-Class" value="org.gpssearch.Exporter"/>
                 <attribute name="Class-Path" value="."/>
-                <attribute name="Rsrc-Class-Path" value="./ org.eclipse.osgi_3.7.2.dist.jar org.eclipse.core.commands_3.6.0.dist.jar org.eclipse.equinox.common_3.6.0.dist.jar org.eclipse.equinox.registry_3.5.101.dist.jar org.eclipse.core.runtime_3.7.0.dist.jar org.eclipse.text_3.5.101.dist.jar org.eclipse.jface_3.7.0.dist.jar org.eclipse.jface.text_3.7.2.dist.jar org.eclipse.ui.workbench_3.7.1.dist.jar com.ibm.icu_4.4.2.v20110823.jar org.eclipse.ui.forms_3.5.101.dist.jar org.hamcrest.core_1.1.0.jar swt.jar"/>
+                <attribute name="Rsrc-Class-Path" value="./ org.eclipse.osgi_3.7.2.dist.jar org.eclipse.core.commands_3.6.0.dist.jar org.eclipse.equinox.common_3.6.0.dist.jar org.eclipse.equinox.registry_3.5.101.dist.jar org.eclipse.core.runtime_3.7.0.dist.jar org.eclipse.text_3.5.101.dist.jar org.eclipse.jface_3.7.0.dist.jar org.eclipse.jface.text_3.7.2.dist.jar org.eclipse.ui.workbench_3.7.1.dist.jar org.eclipse.ui.forms_3.5.101.dist.jar org.hamcrest.core_1.1.0.jar swt.jar"/>
             </manifest>
             <zipfileset src="jar-in-jar-loader.zip"/>
             <fileset dir="bin"/>
@@ -25,7 +25,6 @@
             <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.jface_3.7.0.dist.jar"/>
             <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.jface.text_3.7.2.dist.jar"/>
             <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.ui.workbench_3.7.1.dist.jar"/>
-            <zipfileset dir="/usr/lib/eclipse/plugins" includes="com.ibm.icu_4.4.2.v20110823.jar"/>
             <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.ui.forms_3.5.101.dist.jar"/>
             <fileset dir="../geoscrape/bin">
             	  <patternset id="non.test.binaries">
