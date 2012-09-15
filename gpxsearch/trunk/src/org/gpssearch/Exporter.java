@@ -200,6 +200,7 @@ public class Exporter
 					}
 					line = br.readLine();
 				}
+				br.close();
 			}
 		}
 		catch (IOException e)
@@ -235,6 +236,7 @@ public class Exporter
 					}
 					line = br.readLine();
 				}
+				br.close();
 			}
 		}
 		catch (IOException e)
@@ -267,6 +269,7 @@ public class Exporter
 					}
 					line = br.readLine();
 				}
+				br.close();
 			}
 		}
 		catch (IOException e)
