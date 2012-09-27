@@ -4,34 +4,30 @@
     <!--ANT 1.7 is required                                        -->
 	<!-- if you want to build PQ Libre with other versions of the dependencies than what is listed here you must edit this file. -->
 	<property name="build.version" value="0.3"/>
+	<property environment="env"/>
     <target name="create_run_jar">
         <jar destfile="build/pqlibre.jar">
             <manifest>
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
                 <attribute name="Rsrc-Main-Class" value="org.gpssearch.Exporter"/>
                 <attribute name="Class-Path" value="."/>
-                <attribute name="Rsrc-Class-Path" value="./ org.eclipse.osgi_3.7.2.dist.jar org.eclipse.core.commands_3.6.0.dist.jar org.eclipse.equinox.common_3.6.0.dist.jar org.eclipse.equinox.registry_3.5.101.dist.jar org.eclipse.core.runtime_3.7.0.dist.jar org.eclipse.text_3.5.101.dist.jar org.eclipse.jface_3.7.0.dist.jar org.eclipse.jface.text_3.7.2.dist.jar org.eclipse.ui.workbench_3.7.1.dist.jar org.eclipse.ui.forms_3.5.101.dist.jar org.hamcrest.core_1.1.0.jar swt.jar"/>
-            </manifest>
+            	<attribute name="Rsrc-Class-Path" value="./ org.hamcrest.core_1.1.0.v20090501071000.jar swt.jar org.eclipse.core.commands_3.6.1.v20120521-2329.jar org.eclipse.equinox.common_3.6.100.v20120522-1841.jar org.eclipse.jface_3.8.0.v20120521-2329.jar org.eclipse.osgi_3.8.0.v20120529-1548.jar org.eclipse.ui.workbench_3.103.0.v20120530-1824.jar"/>
+            	            </manifest>
             <zipfileset src="jar-in-jar-loader.zip"/>
             <fileset dir="bin"/>
             <fileset dir="." includes="icon*.png"/>
             <fileset dir="." includes="diftersiz.db"/>
-            <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.osgi_3.7.2.dist.jar"/>
-            <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.core.commands_3.6.0.dist.jar"/>
-            <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.equinox.common_3.6.0.dist.jar"/>
-            <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.equinox.registry_3.5.101.dist.jar"/>
-            <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.core.runtime_3.7.0.dist.jar"/>
-            <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.text_3.5.101.dist.jar"/>
-            <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.jface_3.7.0.dist.jar"/>
-            <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.jface.text_3.7.2.dist.jar"/>
-            <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.ui.workbench_3.7.1.dist.jar"/>
-            <zipfileset dir="/usr/lib/eclipse/plugins" includes="org.eclipse.ui.forms_3.5.101.dist.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.hamcrest.core_1.1.0.v20090501071000.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.core.commands_3.6.1.v20120521-2329.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.equinox.common_3.6.100.v20120522-1841.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.jface_3.8.0.v20120521-2329.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.osgi_3.8.0.v20120529-1548.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.ui.workbench_3.103.0.v20120530-1824.jar"/>
             <fileset dir="../geoscrape/bin">
             	  <patternset id="non.test.binaries">
             	    <exclude name="**/*Test*"/>
             	  </patternset>
             	</fileset>
-            <zipfileset dir="/usr/lib/eclipse/dropins/jdt/plugins" includes="org.hamcrest.core_1.1.0.jar"/>
         </jar>
     	<!-- create the various distributions by adding the relevant swt.jar file -->
     	<!-- 32-bit Windows -->

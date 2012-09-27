@@ -65,6 +65,8 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 	private List<Attribute> excludedAttributes = new ArrayList<Attribute>();
 	private List<Attribute> includedAttributes = new ArrayList<Attribute>();
 	private UserIdManager idManager;
+	private boolean checkKeyword;
+	private String keyWord;
 
 	// format options
 	private boolean includeLogs;
@@ -86,12 +88,12 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 	private void parseProperties()
 	{
 		SimpleDateFormat dateformat = new SimpleDateFormat(login.getDateFormat());
-		checkFavouritePoints = Boolean.parseBoolean(properties.getProperty("btnRequireFav"));
+		checkFavouritePoints = Boolean.parseBoolean(properties.getProperty("btnRequireFav","false"));
 		if (checkFavouritePoints)
 		{
 			minFavPoints = Integer.parseInt(properties.getProperty("favouritePoints"));
 		}
-		checkPlacedOnOrAfter = Boolean.parseBoolean(properties.getProperty("btnPlacedAfter"));
+		checkPlacedOnOrAfter = Boolean.parseBoolean(properties.getProperty("btnPlacedAfter","false"));
 		if (checkPlacedOnOrAfter)
 		{
 			try
@@ -103,7 +105,7 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 				checkPlacedOnOrAfter = false;
 			}
 		}
-		checkPlacedOnOrBefore = Boolean.parseBoolean(properties.getProperty("btnPlacedBefore"));
+		checkPlacedOnOrBefore = Boolean.parseBoolean(properties.getProperty("btnPlacedBefore","false"));
 		if (checkPlacedOnOrBefore)
 		{
 			try
@@ -115,7 +117,7 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 				checkPlacedOnOrBefore = false;
 			}
 		}
-		checkFoundDate = Boolean.parseBoolean(properties.getProperty("btnFoundInLast"));
+		checkFoundDate = Boolean.parseBoolean(properties.getProperty("btnFoundInLast","false"));
 		if (checkFoundDate)
 		{
 			try
@@ -130,11 +132,11 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 				checkFoundDate = false;
 			}
 		}
-		notFound = Boolean.parseBoolean(properties.getProperty("btnHasNotBeen"));
-		checkTrackables = Boolean.parseBoolean(properties.getProperty("btnHasTrackable"));
-		checkDisabled = Boolean.parseBoolean(properties.getProperty("btnIgnoreDisabled"));
-		ignoreOwn = Boolean.parseBoolean(properties.getProperty("btnIgnoreOwn"));
-		checkDT = Boolean.parseBoolean(properties.getProperty("btnFilterDifficultyterrain"));
+		notFound = Boolean.parseBoolean(properties.getProperty("btnHasNotBeen","false"));
+		checkTrackables = Boolean.parseBoolean(properties.getProperty("btnHasTrackable","false"));
+		checkDisabled = Boolean.parseBoolean(properties.getProperty("btnIgnoreDisabled","false"));
+		ignoreOwn = Boolean.parseBoolean(properties.getProperty("btnIgnoreOwn","false"));
+		checkDT = Boolean.parseBoolean(properties.getProperty("btnFilterDifficultyterrain","false"));
 		if (checkDT)
 		{
 			for (Object keyObj : properties.keySet())
@@ -150,7 +152,7 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 			}
 		}
 
-		checkSize = Boolean.parseBoolean(properties.getProperty("btnFilterSize"));
+		checkSize = Boolean.parseBoolean(properties.getProperty("btnFilterSize","false"));
 		if (checkSize)
 		{
 			if (properties.getProperty("btnNotChosenSize").equals("true"))
@@ -187,7 +189,7 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 			}
 		}
 
-		checkType = Boolean.parseBoolean(properties.getProperty("btnFilterType"));
+		checkType = Boolean.parseBoolean(properties.getProperty("btnFilterType","false"));
 		if (checkType)
 		{
 			if (properties.getProperty("btnCito").equals("true"))
@@ -241,7 +243,7 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 			}
 		}
 
-		checkAttributes = Boolean.parseBoolean(properties.getProperty("btnFilterAttributes"));
+		checkAttributes = Boolean.parseBoolean(properties.getProperty("btnFilterAttributes","false"));
 		if (checkAttributes)
 		{
 			for (Object keyObj : properties.keySet())
@@ -262,6 +264,12 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 					}
 				}
 			}
+		}
+		
+		checkKeyword = Boolean.parseBoolean(properties.getProperty("btnMatchKeyword","false"));
+		if(checkKeyword)
+		{
+			this.keyWord = properties.getProperty("keywordText", "");
 		}
 
 		includeLogs = Boolean.parseBoolean(properties.getProperty("btnIncludeLogs"));
@@ -455,6 +463,19 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 				}
 			}
 		}
+		//keyword matching
+		if(checkKeyword)
+		{
+			//check the title for keywords
+			if(keyWord!=null)
+			{
+				if(!cache.getName().toLowerCase().contains(keyWord.toLowerCase()))
+				{
+					return false;
+				}
+			}
+		}
+		//only populate the Difficulty/Terrain/Size image if we have to
 		if (checkDT || checkSize)
 		{
 			searcher.populateDTfromImage(cache);

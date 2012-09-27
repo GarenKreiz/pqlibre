@@ -103,6 +103,9 @@ public class MainDialog extends Dialog
 	private UserIdManager idManager;
 
 	private Button btnIncludeLogs;
+	private Text keywordText;
+
+	private Button btnMatchKeyword;
 
 	/**
 	 * Create the dialog.
@@ -528,8 +531,22 @@ public class MainDialog extends Dialog
 		btnNewButton.setText("Use home location");
 
 		btnIncludeLogs = new Button(container, SWT.CHECK);
-		btnIncludeLogs.setBounds(10, 575, 196, 26);
+		btnIncludeLogs.setBounds(10, 620, 196, 26);
 		btnIncludeLogs.setText("Include full logs in output");
+		
+		btnMatchKeyword = new Button(container, SWT.CHECK);
+		btnMatchKeyword.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				keywordText.setEnabled(btnMatchKeyword.getSelection());
+			}
+		});
+		btnMatchKeyword.setBounds(10, 538, 173, 26);
+		btnMatchKeyword.setText("Title contains keyword:");
+		
+		keywordText = new Text(container, SWT.BORDER);
+		keywordText.setEnabled(false);
+		keywordText.setBounds(183, 538, 203, 21);
 
 		applyProperties();
 		return container;
@@ -683,6 +700,11 @@ public class MainDialog extends Dialog
 				String homeLocText = login.getHomeLocation().toString();
 				locationInput.setText(homeLocText);
 			}
+		}
+		//set the keywordText abledness to selection of corresponding button
+		if(keywordText != null && btnMatchKeyword!=null)
+		{
+			keywordText.setEnabled(btnMatchKeyword.getSelection());
 		}
 	}
 
@@ -842,6 +864,6 @@ public class MainDialog extends Dialog
 	@Override
 	protected Point getInitialSize()
 	{
-		return new Point(642, 690);
+		return new Point(642, 735);
 	}
 }
