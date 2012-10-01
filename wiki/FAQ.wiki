@@ -20,6 +20,10 @@
   __*Q*: I have a great idea for a feature you should include!
    __*A*: Great! Drop us an email or create a feature request using the "Issues" tab. Describe your idea in as much detail as possible. Feel free to send us an image if you think that helps.
 
+
+  __*Q*: I can't log in. 
+   __*A*: Are you using a language other than English on the geocaching.com site? If so, this is a known problem and will hopefully be fixed in an upcoming release. In the meantime, switch your geocaching.com language setting to English by logging in using your browser and going to this page: http://www.geocaching.com/account/ManagePreferences.aspx
+
   __*Q*: It's not working! 
    __*A*: Sorry to hear that. Please email us or, even better, create a bug report using the "Issues" tab. When you do, please describe the problem in as great detail as possible. Include information about what OS you are using, what version of the OS, and what version of Java you are using. Describe the exact steps you followed to produce the problem, and exactly what happens when you encounter the problem. If possible, please include the `.gpxexporter.properties` file you can find in your home directory. The more detail you include, the faster we can fix the problem. Thanks!
 
