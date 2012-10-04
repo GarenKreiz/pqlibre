@@ -23,8 +23,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.geoscrape.Attribute;
 
 /**
- * Dialog that lets users select attributes that a cache must satisfy to be included in a search.
- *  
+ * Dialog that lets users select attributes that a cache must satisfy to be
+ * included in a search.
+ * 
  */
 public class AttributeDialog extends Dialog
 {
@@ -114,8 +115,7 @@ public class AttributeDialog extends Dialog
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.setText("Cancel");
 
-		ScrolledComposite scrolledComposite = new ScrolledComposite(
-				shlAttributes, SWT.BORDER | SWT.V_SCROLL);
+		ScrolledComposite scrolledComposite = new ScrolledComposite(shlAttributes, SWT.BORDER | SWT.V_SCROLL);
 		scrolledComposite.setAlwaysShowScrollBars(true);
 		FormData fd_scrolledComposite = new FormData();
 		fd_scrolledComposite.bottom = new FormAttachment(btnOk, -6);
@@ -130,11 +130,10 @@ public class AttributeDialog extends Dialog
 		composite_2.setLayout(new GridLayout(2, false));
 
 		Label lblNewLabel = new Label(composite_2, SWT.NONE);
-		lblNewLabel.setText("Attribute      ");
+		lblNewLabel.setText("Attribute                            ");
 
 		Composite composite_3 = new Composite(composite_2, SWT.NONE);
-		composite_3.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false,
-				false, 1, 1));
+		composite_3.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 		composite_3.setLayout(new GridLayout(5, false));
 
 		Label lblInclude = new Label(composite_3, SWT.NONE);
@@ -156,8 +155,7 @@ public class AttributeDialog extends Dialog
 			lblFoo.setText(a.toString());
 
 			Composite composite_1 = new Composite(composite_2, SWT.NONE);
-			composite_1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER,
-					false, false, 1, 1));
+			composite_1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
 			composite_1.setLayout(new GridLayout(5, false));
 
 			Button includeButton = new Button(composite_1, SWT.RADIO);
@@ -173,8 +171,7 @@ public class AttributeDialog extends Dialog
 			ignoreList.add(ignoreButton);
 		}
 		scrolledComposite.setContent(composite_2);
-		scrolledComposite.setMinSize(composite_2.computeSize(SWT.DEFAULT,
-				SWT.DEFAULT));
+		scrolledComposite.setMinSize(composite_2.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
 		// set the properties
 		applyProperties();
@@ -188,29 +185,32 @@ public class AttributeDialog extends Dialog
 	private void applyProperties()
 	{
 		Set<Object> keys = properties.keySet();
-		for(Object k:keys)
+		for (Object k : keys)
 		{
 			String key = k.toString();
-			if(key.startsWith("attribute/"))
+			if (key.startsWith("attribute/"))
 			{
 				try
 				{
 					String name = key.split("/")[1];
 					Attribute attr = Attribute.parse(name);
 					int index = attributes.indexOf(attr);
-					String value = properties.getProperty(key);
-					if(value.equals("include"))
+					if (index >= 0)
 					{
-						includeList.get(index).setSelection(true);
-						ignoreList.get(index).setSelection(false);
-					}
-					else if(value.equals("exclude"))
-					{
-						excludeList.get(index).setSelection(true);
-						ignoreList.get(index).setSelection(false);
+						String value = properties.getProperty(key);
+						if (value.equals("include"))
+						{
+							includeList.get(index).setSelection(true);
+							ignoreList.get(index).setSelection(false);
+						}
+						else if (value.equals("exclude"))
+						{
+							excludeList.get(index).setSelection(true);
+							ignoreList.get(index).setSelection(false);
+						}
 					}
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
 					e.printStackTrace();
 				}
@@ -237,7 +237,7 @@ public class AttributeDialog extends Dialog
 			}
 			else
 			{
-				//don't store the ignored attributes
+				// don't store the ignored attributes
 				properties.remove(attributeKey);
 			}
 		}

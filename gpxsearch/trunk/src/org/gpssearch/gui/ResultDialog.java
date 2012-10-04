@@ -74,8 +74,14 @@ public class ResultDialog extends Dialog
 			btnSaveFile.setEnabled(true);
 			if (desktop != null)
 			{
-				btnOpenInBrowser.setEnabled(true);
-				btnDisplayMap.setEnabled(true);
+				if(btnOpenInBrowser!=null)
+				{
+					btnOpenInBrowser.setEnabled(true);
+				}
+				if(btnDisplayMap!=null)
+				{
+					btnDisplayMap.setEnabled(true);
+				}
 			}
 			if (caches.size() == 1)
 			{
@@ -204,7 +210,7 @@ public class ResultDialog extends Dialog
 		resultText.setBounds(42, 45, 393, 15);
 		resultText.setText("No caches found.");
 
-		btnDisplayMap = new Button(shlSearchResults, SWT.NONE);
+		/*btnDisplayMap = new Button(shlSearchResults, SWT.NONE);
 		btnDisplayMap.addSelectionListener(new SelectionAdapter()
 		{
 			@Override
@@ -215,7 +221,7 @@ public class ResultDialog extends Dialog
 		});
 		btnDisplayMap.setEnabled(false);
 		btnDisplayMap.setBounds(38, 174, 101, 24);
-		btnDisplayMap.setText("Show on map");
+		btnDisplayMap.setText("Show on map");*/
 
 	}
 
