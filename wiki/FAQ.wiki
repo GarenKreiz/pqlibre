@@ -15,17 +15,21 @@
    __*A*: PQ Libre has been optimised to use as little bandwidth as possible.
 
   __*Q*: How can I speed up my searches?     
-   __*A*: Filter on type, number of favourite points, placed date, contains trackable, and days since last find or not found at all. Ignore own, found, and disabled. The more of these search criteria you have, the more caches can be rejected before downloading the full description. Filtering on size, difficulty, and terrain also helps to a lesser degree. Reducing the search radius and/or limiting the number of caches returned will also help return your result faster. Deselecting the "include full logs" checkbox will speed up the retrieval of individual caches that match your criteria. 
+   __*A*: Filter on type, number of favourite points, placed date, keyword, contains trackable, and days since last find or not found at all. Ignore own, found, and disabled. Also filter on "Needs Maintenance" attribute. The more of these search criteria you have, the more caches can be rejected before downloading the full description. Filtering on size, difficulty, and terrain also helps to a lesser degree. Reducing the search radius and/or limiting the number of caches returned will also help return your result faster. Deselecting the "include full logs" checkbox will speed up the retrieval of individual caches that match your criteria. 
 
   __*Q*: I have a great idea for a feature you should include!
    __*A*: Great! Drop us an email or create a feature request using the "Issues" tab. Describe your idea in as much detail as possible. Feel free to send us an image if you think that helps.
 
 
+  __*Q*: When pressing the "Show Results in Browser" button I only see one cache, despite the search finding several.
+   __*A*: This is a known problem with Internet Explorer. The suggested resolution is to install [http://www.mozilla.org/en-US/firefox/ Firefox] or [http://www.google.com/chrome Chrome] and using that as your default browser.
+
+
   __*Q*: I can't log in. 
-   __*A*: Are you using a language other than English on the geocaching.com site? If so, this is a known problem and will hopefully be fixed in an upcoming release. In the meantime, switch your geocaching.com language setting to English by logging in using your browser and going to this page: http://www.geocaching.com/account/ManagePreferences.aspx
+   __*A*: Are you using PQLibre version 0.2 or earlier and a language other than English on the geocaching.com website? If so, please upgrade. If that does not help, try switch your geocaching.com language setting to English by logging in using your browser and going to this page: http://www.geocaching.com/account/ManagePreferences.aspx and send us a bug report describing the problem in as much detail as possible.
 
   __*Q*: It's not working! 
-   __*A*: Sorry to hear that. Please email us or, even better, create a bug report using the "Issues" tab. When you do, please describe the problem in as great detail as possible. Include information about what OS you are using, what version of the OS, and what version of Java you are using. Describe the exact steps you followed to produce the problem, and exactly what happens when you encounter the problem. If possible, please include the `.gpxexporter.properties` file you can find in your home directory. The more detail you include, the faster we can fix the problem. Thanks!
+   __*A*: Sorry to hear that. Please email us or, even better, create a bug report using the "Issues" tab. When you do, please describe the problem in as great detail as possible. Include information about what OS you are using, what version of the OS, and what version of Java you are using. Describe the exact steps you followed to produce the problem, and exactly what happens when you encounter the problem. If possible, please include the `.gpxexporter.properties` file you can find in your home directory. The more details you include, the faster we can fix the problem. Thanks!
 
 
   __*Q*: How do I make it as easy as possible for you to fix the bug I discovered?
