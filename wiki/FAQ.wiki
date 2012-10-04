@@ -21,6 +21,13 @@
    __*A*: Great! Drop us an email or create a feature request using the "Issues" tab. Describe your idea in as much detail as possible. Feel free to send us an image if you think that helps.
 
 
+  __*Q*: I'm using 64-bit Windows but the 64-bit version does not work.
+   __*A*: Windows is a bit confusing when it comes to what version you should choose. The determining factor is what version of Java you have, not what version of Windows you have: Sometimes people have 64-bit Java on 32-bit Windows, sometimes people have 32-bit Java on 64-bit windows. If it does not work with the 64-bit version, try with the 32-bit version instead, and vice versa.
+
+
+  __*Q*: I'm using 32-bit Windows but the 32-bit version does not work.
+   __*A*: See above.
+
   __*Q*: When pressing the "Show Results in Browser" button I only see one cache, despite the search finding several.
    __*A*: This is a known problem with Internet Explorer. The suggested resolution is to install [http://www.mozilla.org/en-US/firefox/ Firefox] or [http://www.google.com/chrome Chrome] and using that as your default browser.
 
