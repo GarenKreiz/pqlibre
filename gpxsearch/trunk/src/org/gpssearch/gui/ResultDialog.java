@@ -1,11 +1,17 @@
 package org.gpssearch.gui;
 
 import java.awt.Desktop;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -20,6 +26,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.geoscrape.Cache;
 import org.geoscrape.CacheType;
 import org.geoscrape.Location;
+import org.geoscrape.util.HtmlParser;
+import org.geoscrape.util.UserAgentFaker;
+import org.geoscrape.util.WebClient;
 import org.gpssearch.GpxWriter;
 import org.gpssearch.UserIdManager;
 
@@ -30,7 +39,6 @@ import org.gpssearch.UserIdManager;
  */
 public class ResultDialog extends Dialog
 {
-	private static final int URI_SIZE_LIMIT = 8192;
 
 	protected Object result;
 	protected Shell shlSearchResults;
@@ -41,6 +49,8 @@ public class ResultDialog extends Dialog
 	private UserIdManager idManager;
 	private Desktop desktop;
 	private Button btnDisplayMap;
+
+	private String ourname;
 
 	/**
 	 * Create the dialog.
@@ -59,8 +69,9 @@ public class ResultDialog extends Dialog
 	 * 
 	 * @return the result
 	 */
-	public Object open(List<Cache> caches, UserIdManager idManager)
+	public Object open(List<Cache> caches, UserIdManager idManager, String ourname)
 	{
+		this.ourname = ourname;
 		this.caches = caches;
 		this.idManager = idManager;
 		createContents();
@@ -74,11 +85,11 @@ public class ResultDialog extends Dialog
 			btnSaveFile.setEnabled(true);
 			if (desktop != null)
 			{
-				if(btnOpenInBrowser!=null)
+				if (btnOpenInBrowser != null)
 				{
 					btnOpenInBrowser.setEnabled(true);
 				}
-				if(btnDisplayMap!=null)
+				if (btnDisplayMap != null)
 				{
 					btnDisplayMap.setEnabled(true);
 				}
@@ -210,7 +221,7 @@ public class ResultDialog extends Dialog
 		resultText.setBounds(42, 45, 393, 15);
 		resultText.setText("No caches found.");
 
-		/*btnDisplayMap = new Button(shlSearchResults, SWT.NONE);
+		btnDisplayMap = new Button(shlSearchResults, SWT.NONE);
 		btnDisplayMap.addSelectionListener(new SelectionAdapter()
 		{
 			@Override
@@ -221,7 +232,7 @@ public class ResultDialog extends Dialog
 		});
 		btnDisplayMap.setEnabled(false);
 		btnDisplayMap.setBounds(38, 174, 101, 24);
-		btnDisplayMap.setText("Show on map");*/
+		btnDisplayMap.setText("Show on map");
 
 	}
 
@@ -232,10 +243,8 @@ public class ResultDialog extends Dialog
 	{
 		try
 		{
-			String newline = URLEncoder.encode("\n", "UTF-8");
-			StringBuilder url = new StringBuilder(
-					"http://www.gpsvisualizer.com/map_input?data=name,desc,lat,lon,icon_size,sym");
-			int count = 0;
+			String newline = "\n";
+			StringBuilder url = new StringBuilder("name,desc,lat,lon,icon_size,sym");
 			for (Cache c : caches)
 			{
 				StringBuilder tmp = new StringBuilder(newline);
@@ -261,20 +270,40 @@ public class ResultDialog extends Dialog
 				tmp.append(",");
 				tmp.append(shortify(loc.getLongitude().toDecimalString()));
 				tmp.append(",16x16,");
-				tmp.append(getIconUrlString(c.getCacheType()));
-				if(url.length()+tmp.length()>=URI_SIZE_LIMIT)
-				{
-					MessageBox messageBox = new MessageBox(shlSearchResults, SWT.ICON_INFORMATION | SWT.OK );
-					messageBox.setMessage("We're sorry, but gpsvisualizer.com can't display that many caches at once.\n" +
-							"We'll display the closest "+count+" caches instead.");
-					messageBox.setText("Opening a large number of caches.");
-					messageBox.open();
-					break;
-				}
+				tmp.append(getIconUrlString(c));
+
 				url.append(tmp);
-				count++;
 			}
-			desktop.browse(new URI(url.toString()));
+			// compress the string
+			ByteArrayOutputStream data = new ByteArrayOutputStream();
+			ZipOutputStream out = new ZipOutputStream(data);
+			out.setLevel(9);
+			out.putNextEntry(new ZipEntry("file.csv"));
+			byte[] tmp = url.toString().getBytes("UTF-8");
+			out.write(tmp);
+			out.closeEntry();
+			out.close();
+
+			// submit the string to the form
+			WebClient wc = new WebClient();
+			wc.setRequestMethod("POST");
+			wc.setUserAgent(UserAgentFaker.getRandomUserAgent());
+			Map<String, String> params = new HashMap<String, String>();
+			params.put("format", "google");
+			params.put("convert_format", "");
+			params.put("form", "google");
+			Map<String, byte[]> files = new HashMap<String, byte[]>();
+			files.put("uploaded_file_1@tmp.zip", data.toByteArray());
+
+			wc.submitForm("http://www.gpsvisualizer.com/map?output_home", params, files);
+
+			// parse the result, get the address
+			String address = wc.getContentsAsString();
+			address = HtmlParser.getContent("<div id=\"header_ad\">", address);
+			address = HtmlParser.getContent("<a href=\"", "\">", address);
+			address = "http://www.gpsvisualizer.com" + address;
+
+			desktop.browse(new URI(address));
 
 		}
 		catch (Exception e1)
@@ -294,42 +323,42 @@ public class ResultDialog extends Dialog
 	{
 		String res = decimalString;
 		int pointIndex = res.indexOf(".");
-		if(pointIndex>=0)
+		if (pointIndex >= 0)
 		{
-			int digits = res.length()-pointIndex-1;
-			if(digits>5)
+			int digits = res.length() - pointIndex - 1;
+			if (digits > 5)
 			{
-				//get the last six digits
-				String sub = res.substring(0,pointIndex+7);
-				//round 
+				// get the last six digits
+				String sub = res.substring(0, pointIndex + 7);
+				// round
 				double d = Double.parseDouble(sub);
-				d=Math.round(d*100000.0)/100000.0;
-				//convert to string
+				d = Math.round(d * 100000.0) / 100000.0;
+				// convert to string
 				res = Double.toString(d);
-				//get string to last 5 digits
+				// get string to last 5 digits
 				pointIndex = res.indexOf(".");
-				if(pointIndex>=0)
+				if (pointIndex >= 0)
 				{
-					digits = res.length()-pointIndex-1;
-					if(digits>5)
+					digits = res.length() - pointIndex - 1;
+					if (digits > 5)
 					{
-						res=res.substring(0,pointIndex+6);
+						res = res.substring(0, pointIndex + 6);
 					}
 				}
 			}
 		}
-		return res;	
+		return res;
 	}
 
 	/**
 	 * @param cacheType
 	 * @return
 	 */
-	private String getIconUrlString(CacheType cacheType)
+	private String getIconUrlString(Cache c)
 	{
-		StringBuilder res = new StringBuilder("http://geocaching.com/images/wpttypes/sm/");
-		res.append(getId(cacheType));
-		res.append(".gif");
+		StringBuilder res = new StringBuilder("http://pqlibre.googlecode.com/svn/gpxsearch/trunk/img/");
+		res.append(getId(c));
+		res.append(".png");
 		return res.toString();
 	}
 
@@ -337,62 +366,65 @@ public class ResultDialog extends Dialog
 	 * @param cacheType
 	 * @return
 	 */
-	private Object getId(CacheType cacheType)
+	private String getId(Cache c)
 	{
 		String res = "";
-		switch (cacheType)
+		if (c.isFound())
 		{
-			case TRADITIONAL:
-				res = "2";
-				break;
-			case MULTI:
-				res = "3";
-				break;
-			case VIRTUAL:
-				res = "4";
-				break;
-			case LETTERBOX:
-				res = "5";
-				break;
-			case EVENT:
-				res = "6";
-				break;
-			case MYSTERY:
-				res = "8";
-				break;
-			case PROJECTAPE1:
-			case PROJECTAPE2:
-				res = "9";
-				break;
-			case WEBCAM:
-				res = "11";
-				break;
-			case CITO:
-				res = "13";
-				break;
-			case BENCHMARK:
-				res = "27";
-				break;
-			case WHERIGO:
-				res = "1858";
-				break;
-			case EARTH_CACHE:
-				res = "earthcache";
-				break;
-			case LOST_AND_FOUND_EVENT:
-				res = "3653";
-				break;
-			case MEGA_EVENT:
-				res="453";
-				break;
-			case GPSADVENTURE:
-				res = "1304";
-				break;
-			default:
-				//use traditional as the default
-				res = "2";
-				break;
+			res = "found";
+		}
+		else if (c.getHider().getName().equals( ourname))
+		{
+			res = "own";
+		}
+		else
+		{
+			CacheType cacheType = c.getCacheType();
+			switch (cacheType)
+			{
+				case TRADITIONAL:
+					res = "trad";
+					break;
+				case MULTI:
+					res = "multi";
+					break;
+				case VIRTUAL:
+					res = "virtual";
+					break;
+				case LETTERBOX:
+					res = "letter";
+					break;
+				case EVENT:
+					res = "event";
+					break;
+				case MYSTERY:
+					res = "myst";
+					break;
+				case WEBCAM:
+					res = "webcam";
+					break;
+				case CITO:
+					res = "cito";
+					break;
+				case WHERIGO:
+					res = "wherigo";
+					break;
+				case EARTH_CACHE:
+					res = "earth";
+					break;
+				case MEGA_EVENT:
+					res = "megaevent";
+					break;
+				default:
+					// use blank as the default
+					res = "blank";
+					break;
+			}
 
+		}
+		if (c.isDisabled())
+		{
+			res += "d";
 		}
 		return res;
 	}
@@ -406,7 +438,7 @@ public class ResultDialog extends Dialog
 	 */
 	private Object escape(String string) throws UnsupportedEncodingException
 	{
-		string = URLEncoder.encode(string, "UTF-8");
+		string = string.replaceAll(",", "");
 		return string;
 	}
 }
