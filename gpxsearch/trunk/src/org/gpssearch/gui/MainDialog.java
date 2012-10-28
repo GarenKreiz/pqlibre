@@ -840,6 +840,7 @@ public class MainDialog extends Dialog
 					List<Cache> caches = progr.getCaches();
 					ResultDialog resDiag = new ResultDialog(getShell(), SWT.APPLICATION_MODAL);
 					resDiag.open(caches,idManager,login.getUserName());
+					idManager.saveDb();
 				}
 				catch (InvocationTargetException ex)
 				{

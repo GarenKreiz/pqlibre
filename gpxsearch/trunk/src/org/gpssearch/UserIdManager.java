@@ -50,14 +50,7 @@ public class UserIdManager
 				cacher.populate(login);
 				// store it
 				res = cacher.getId();
-				if (cacher.getProfilePage() != null)
-				{
-					userIds.put(cacher.getProfilePage(), res);
-				}
-				if (cacher.getName() != null)
-				{
-					userNames.put(cacher.getName(), res);
-				}
+				setId(cacher,res);
 			}
 		}
 		return res;
