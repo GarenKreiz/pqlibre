@@ -115,6 +115,9 @@ public class MapGenerator implements IRunnableWithProgress
 			params.put("format", "google");
 			params.put("convert_format", "");
 			params.put("form", "google");
+			//leaving the following in skips the output page and returns the results directly
+			//params.put("return_image", "1");
+			//TODO: Save the output to a local file, redirect it.
 			Map<String, byte[]> files = new HashMap<String, byte[]>();
 			files.put("uploaded_file_1@tmp.zip", data.toByteArray());
 			monitor.worked(1);

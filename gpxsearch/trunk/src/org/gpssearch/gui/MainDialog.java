@@ -1,5 +1,6 @@
 package org.gpssearch.gui;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -7,6 +8,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -22,13 +24,19 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Text;
@@ -115,7 +123,7 @@ public class MainDialog extends Dialog
 	public MainDialog(Shell parentShell, Login login)
 	{
 		super(parentShell);
-		setShellStyle(SWT.SHELL_TRIM | SWT.APPLICATION_MODAL);
+		setShellStyle(SWT.CLOSE | SWT.MIN | SWT.MAX | SWT.TITLE | SWT.APPLICATION_MODAL);
 		this.login = login;
 		this.dateFormat = login.getDateFormat();
 		properties = new Properties();
@@ -406,7 +414,7 @@ public class MainDialog extends Dialog
 		btnIgnoreOwn = new Button(container, SWT.CHECK);
 		btnIgnoreOwn.setToolTipText("Ignore caches you own");
 		btnIgnoreOwn.setSelection(true);
-		btnIgnoreOwn.setBounds(8, 442, 107, 26);
+		btnIgnoreOwn.setBounds(10, 442, 107, 26);
 		btnIgnoreOwn.setText("Ignore own");
 
 		btnIgnoreFound = new Button(container, SWT.CHECK);
@@ -533,20 +541,56 @@ public class MainDialog extends Dialog
 		btnIncludeLogs = new Button(container, SWT.CHECK);
 		btnIncludeLogs.setBounds(10, 620, 196, 26);
 		btnIncludeLogs.setText("Include full logs in output");
-		
+
 		btnMatchKeyword = new Button(container, SWT.CHECK);
-		btnMatchKeyword.addSelectionListener(new SelectionAdapter() {
+		btnMatchKeyword.addSelectionListener(new SelectionAdapter()
+		{
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e)
+			{
 				keywordText.setEnabled(btnMatchKeyword.getSelection());
 			}
 		});
 		btnMatchKeyword.setBounds(10, 538, 173, 26);
 		btnMatchKeyword.setText("Title contains keyword:");
-		
+
 		keywordText = new Text(container, SWT.BORDER);
 		keywordText.setEnabled(false);
 		keywordText.setBounds(183, 538, 203, 21);
+
+		Link link = new Link(container, SWT.NONE);
+		Font f = link.getFont();
+		FontData[] fds = f.getFontData();
+		for (FontData fd : fds)
+		{
+			fd.setHeight(7);
+		}
+		Font nu = new Font(Display.getCurrent(),fds);
+		link.setFont(nu);
+		link.setTouchEnabled(true);
+		link.setToolTipText("Click link to visit site");
+		link.setBounds(534, 10, 87, 31);
+		link.setText("Maps by <a href=\"http://gpsvisualizer.com\">GPSVisualizer.com</a>");
+		link.addListener(SWT.Selection, new Listener()
+		{
+			// handle clicks on the link
+			public void handleEvent(Event event)
+			{
+				try
+				{
+					if (Desktop.isDesktopSupported())
+					{
+						Desktop d = Desktop.getDesktop();
+						d.browse(new URI(event.text));
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+
+		});
 
 		applyProperties();
 		return container;
@@ -701,8 +745,8 @@ public class MainDialog extends Dialog
 				locationInput.setText(homeLocText);
 			}
 		}
-		//set the keywordText abledness to selection of corresponding button
-		if(keywordText != null && btnMatchKeyword!=null)
+		// set the keywordText abledness to selection of corresponding button
+		if (keywordText != null && btnMatchKeyword != null)
 		{
 			keywordText.setEnabled(btnMatchKeyword.getSelection());
 		}
@@ -839,7 +883,7 @@ public class MainDialog extends Dialog
 					progdialog.run(true, true, progr);
 					List<Cache> caches = progr.getCaches();
 					ResultDialog resDiag = new ResultDialog(getShell(), SWT.APPLICATION_MODAL);
-					resDiag.open(caches,idManager,login.getUserName());
+					resDiag.open(caches, idManager, login.getUserName());
 					idManager.saveDb();
 				}
 				catch (InvocationTargetException ex)
