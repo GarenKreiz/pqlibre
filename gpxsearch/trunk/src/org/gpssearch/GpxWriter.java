@@ -10,8 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
-import javax.management.monitor.Monitor;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.geoscrape.Attribute;
