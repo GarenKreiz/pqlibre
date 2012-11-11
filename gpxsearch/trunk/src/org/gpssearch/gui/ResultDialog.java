@@ -151,7 +151,7 @@ public class ResultDialog extends Dialog
 					try
 					{
 						GpxWriter writer = new GpxWriter(caches, idManager,outputName);
-						ProgressMonitorDialog progdialog = new ProgressMonitorDialog(getParent());
+						ProgressMonitorDialog progdialog = new ProgressMonitorDialog(shlSearchResults);
 						progdialog.run(true, true, writer);
 					}
 					catch (InvocationTargetException e1)
@@ -235,7 +235,7 @@ public class ResultDialog extends Dialog
 	protected void displayMap()
 	{
 		MapGenerator mapGen = new MapGenerator(caches,ourname,desktop);
-		ProgressMonitorDialog progdialog = new ProgressMonitorDialog(getParent());
+		ProgressMonitorDialog progdialog = new ProgressMonitorDialog(shlSearchResults);
 		try
 		{
 			progdialog.run(true, true, mapGen);
