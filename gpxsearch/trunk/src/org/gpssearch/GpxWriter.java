@@ -4,11 +4,16 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
 
+import javax.management.monitor.Monitor;
+
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.geoscrape.Attribute;
 import org.geoscrape.Cache;
 import org.geoscrape.CacheLog;
@@ -24,33 +29,32 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
  * Generates .gpx formatted output from a list of caches.
  * 
  */
-public class GpxWriter
+public class GpxWriter implements IRunnableWithProgress
 {
 	private List<Cache> caches;
 	private UserIdManager idManager;
+	private String fileName;
 
-	public GpxWriter(List<Cache> caches, UserIdManager man)
+	public GpxWriter(List<Cache> caches, UserIdManager man,String fileName)
 	{
 		this.caches = caches;
 		this.idManager = man;
+		this.fileName = fileName;
 
 	}
 
-	public void write(String fileName) throws IOException
-	{
-		write(new File(fileName));
-	}
 
 	/**
 	 * @param file
+	 * @param monitor 
 	 * @throws IOException
 	 */
-	public void write(File file) throws IOException
+	public void write(File file, IProgressMonitor monitor) throws IOException
 	{
 		OutputStream os = new FileOutputStream(file);
 		try
 		{
-			write(os);
+			write(os,monitor);
 		}
 		catch (SAXException e)
 		{
@@ -68,7 +72,7 @@ public class GpxWriter
 	 * @throws IOException
 	 * @throws SAXException
 	 */
-	public void write(OutputStream os) throws IOException, SAXException
+	public void write(OutputStream os,IProgressMonitor monitor) throws IOException, SAXException
 	{
 		OutputFormat of = new OutputFormat("XML", "UTF-8", true);
 		of.setIndent(1);
@@ -130,15 +134,25 @@ public class GpxWriter
 		atts.addAttribute("", "", "maxlon", "", Double.toString(maxLon));
 		hd.startElement("", "", "bounds", atts);
 		hd.endElement("", "", "bounds");
+		
+		int totalCaches = caches.size();
+		int cacheCount = 0;
 
 		// add all the logs
 		for (Cache c : caches)
 		{
+			if(monitor.isCanceled())
+			{
+				break;
+			}
 			if (c.isUnavailableToUs())
 			{
 				// skip premium caches if we are not a premium user
 				continue;
 			}
+			monitor.worked(1);
+			cacheCount++;
+			monitor.subTask("Saving cache " + cacheCount+"/"+totalCaches);
 			// add coordinates
 			atts.clear();
 			atts.addAttribute("", "", "lat", "", c.getLocation().getLatitude().toDecimalString());
@@ -189,17 +203,17 @@ public class GpxWriter
 			putElement(hd, "groundspeak:name", c.getName());
 			putElement(hd, "groundspeak:placed_by", c.getHider().getName());
 			atts.clear();
-			
-			//put all the log ids in the idmanager database before checking
+
+			// put all the log ids in the idmanager database before checking
 
 			for (CacheLog log : c.getLogs())
 			{
-				if(log.getLoggedBy().getId()!=null)
+				if (log.getLoggedBy().getId() != null)
 				{
-					idManager.setId(log.getLoggedBy(),log.getLoggedBy().getId());
+					idManager.setId(log.getLoggedBy(), log.getLoggedBy().getId());
 				}
 			}
-			
+
 			atts.addAttribute("", "", "id", "", Long.toString(idManager.getId(c.getHider())));
 			putElement(hd, "groundspeak:owner", c.getHider().getName(), atts);
 			putElement(hd, "groundspeak:type", cacheType);
@@ -251,7 +265,7 @@ public class GpxWriter
 				putElement(hd, "groundspeak:type", log.getLogType().getText());
 				atts.clear();
 
-				if(log.getLoggedBy().getId()!=null)
+				if (log.getLoggedBy().getId() != null)
 				{
 					atts.addAttribute("", "", "id", "", Long.toString(log.getLoggedBy().getId()));
 				}
@@ -305,8 +319,35 @@ public class GpxWriter
 		hd.startElement("", "", name, atts);
 		if (content != null)
 		{
-			hd.characters(content.toCharArray(), 0, content.length());
+			try
+			{
+				char [] contentChars = content.toCharArray();
+				hd.characters(contentChars, 0, contentChars.length);
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 		hd.endElement("", "", name);
+	}
+
+	/**
+	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	@Override
+	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+	{
+		monitor.beginTask("Writing output...",caches.size());
+		try
+		{
+			write(new File(fileName),monitor);
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		monitor.done();
+		
 	}
 }

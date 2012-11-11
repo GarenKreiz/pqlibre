@@ -337,8 +337,6 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 									idManager.setId(log.getLoggedBy(), log.getLoggedBy().getId());
 								}
 							}
-							// and load the user id for the cache
-							idManager.getId(cache.getHider());
 						}
 					}
 					catch (Exception e)

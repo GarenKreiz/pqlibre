@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -30,6 +32,7 @@ import org.geoscrape.util.HtmlParser;
 import org.geoscrape.util.UserAgentFaker;
 import org.geoscrape.util.WebClient;
 import org.gpssearch.GpxWriter;
+import org.gpssearch.SearcherProgress;
 import org.gpssearch.UserIdManager;
 
 /**
@@ -146,7 +149,6 @@ public class ResultDialog extends Dialog
 			{
 
 				// Generate GPX, ask user to save it
-				GpxWriter writer = new GpxWriter(caches, idManager);
 
 				FileDialog fileDialog = new FileDialog(shlSearchResults, SWT.SAVE | SWT.DIALOG_TRIM);
 				fileDialog.setText("Save .gpx file");
@@ -162,11 +164,16 @@ public class ResultDialog extends Dialog
 					}
 					try
 					{
-						writer.write(outputName);
+						GpxWriter writer = new GpxWriter(caches, idManager,outputName);
+						ProgressMonitorDialog progdialog = new ProgressMonitorDialog(getParent());
+						progdialog.run(true, true, writer);
 					}
-					catch (IOException e1)
+					catch (InvocationTargetException e1)
 					{
-						// TODO Notify user if this fails.
+						e1.printStackTrace();
+					}
+					catch (InterruptedException e1)
+					{
 						e1.printStackTrace();
 					}
 				}
