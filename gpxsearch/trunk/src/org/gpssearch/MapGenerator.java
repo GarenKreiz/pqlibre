@@ -17,6 +17,7 @@ import org.geoscrape.Cache;
 import org.geoscrape.CacheType;
 import org.geoscrape.Location;
 import org.geoscrape.util.HtmlParser;
+import org.geoscrape.util.Tools;
 import org.geoscrape.util.UserAgentFaker;
 import org.geoscrape.util.WebClient;
 
@@ -104,7 +105,7 @@ public class MapGenerator implements IRunnableWithProgress
 			out.closeEntry();
 			out.close();
 			monitor.subTask("Uploading description...");
-			monitor.worked(10);
+			monitor.worked(20);
 
 			// submit the string to the form
 			WebClient wc = new WebClient();
@@ -128,9 +129,11 @@ public class MapGenerator implements IRunnableWithProgress
 			address = HtmlParser.getContent("<a href=\"", "\">", address);
 			address = "http://www.gpsvisualizer.com" + address;
 			monitor.subTask("Redirecting browser window...");
-			monitor.worked(20);
+			monitor.worked(10);
 
 			desktop.browse(new URI(address));
+			//keep dialog open for a little bit longer
+			Tools.sleep(500);
 
 		}
 		catch (Exception e1)
