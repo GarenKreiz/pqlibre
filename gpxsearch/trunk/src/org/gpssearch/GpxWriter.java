@@ -145,13 +145,13 @@ public class GpxWriter implements IRunnableWithProgress
 			{
 				break;
 			}
+			monitor.worked(1);
+			cacheCount++;
 			if (c.isUnavailableToUs())
 			{
 				// skip premium caches if we are not a premium user
 				continue;
 			}
-			monitor.worked(1);
-			cacheCount++;
 			monitor.subTask("Saving cache " + cacheCount+"/"+totalCaches);
 			// add coordinates
 			atts.clear();
