@@ -142,6 +142,8 @@ public class MapGenerator implements IRunnableWithProgress
 			}
 			//recode backslashes
 			address = address.replaceAll("\\\\", "/");
+			//spaces not allowed
+			address = address.replaceAll(" ", "%20");
 			address = "file://"+address;
 			//write the map to temp file
 			FileWriter fw = new FileWriter(tmpFile);
