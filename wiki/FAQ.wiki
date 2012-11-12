@@ -28,6 +28,9 @@
   __*Q*: I'm using 32-bit Windows but the 32-bit version does not work.
    __*A*: See above.
 
+  __*Q*: Why does the progress bar pause when saving a GPX file?
+   __*A*: A valid GPX file requires the user ID of the cache owner. This is not automatically included in the cache info, so PQLibre needs to do a lookup on the cache owner's name. This used to be done during the search phase, but is now done during the file save phase so as to speed up the search - after all the owner's ID is not needed if you choose the map output or to open the caches in a browser. PQLibre saves the IDs of all users it encounters, so the more you use it the less likely a pause becomes.
+
   __*Q*: When pressing the "Show Results in Browser" button I only see one cache, despite the search finding several.
    __*A*: This is a known problem with Internet Explorer. The suggested resolution is to install [http://www.mozilla.org/en-US/firefox/ Firefox] or [http://www.google.com/chrome Chrome] and using that as your default browser.
 
