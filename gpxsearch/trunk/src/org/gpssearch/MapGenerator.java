@@ -1,7 +1,11 @@
 package org.gpssearch;
 
 import java.awt.Desktop;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
@@ -116,24 +120,39 @@ public class MapGenerator implements IRunnableWithProgress
 			params.put("convert_format", "");
 			params.put("form", "google");
 			//leaving the following in skips the output page and returns the results directly
-			//params.put("return_image", "1");
-			//TODO: Save the output to a local file, redirect it.
+			params.put("return_image", "1");
 			Map<String, byte[]> files = new HashMap<String, byte[]>();
 			files.put("uploaded_file_1@tmp.zip", data.toByteArray());
 			monitor.worked(1);
 
 			wc.submitForm("http://www.gpsvisualizer.com/map?output_home", params, files);
-			monitor.subTask("Reading map address...");
+			monitor.subTask("Reading map...");
 			monitor.worked(50);
 
 			// parse the result, get the address
-			String address = wc.getContentsAsString();
-			address = HtmlParser.getContent("<div id=\"header_ad\">", address);
-			address = HtmlParser.getContent("<a href=\"", "\">", address);
-			address = "http://www.gpsvisualizer.com" + address;
+			String contents = wc.getContentsAsString();
+			//create a temporary file
+			File tmpFile = File.createTempFile("gpxsearcher", ".html");
+			tmpFile.deleteOnExit();
+			String address =  tmpFile.getAbsolutePath();
+			if(address.indexOf(":")==1)
+			{
+				//windows local path
+				address = "/"+address;
+			}
+			//recode backslashes
+			address = address.replaceAll("\\\\", "/");
+			address = "file://"+address;
+			//write the map to temp file
+			FileWriter fw = new FileWriter(tmpFile);
+			fw.write(contents);
+			fw.close();
+			
+			
 			monitor.subTask("Redirecting browser window...");
 			monitor.worked(10);
 
+			//open temp file in browser
 			desktop.browse(new URI(address));
 			//keep dialog open for a little bit longer
 			Tools.sleep(500);
