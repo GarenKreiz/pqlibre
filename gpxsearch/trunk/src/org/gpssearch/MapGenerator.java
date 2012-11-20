@@ -1,10 +1,8 @@
 package org.gpssearch;
 
 import java.awt.Desktop;
-import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +18,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.geoscrape.Cache;
 import org.geoscrape.CacheType;
 import org.geoscrape.Location;
-import org.geoscrape.util.HtmlParser;
 import org.geoscrape.util.Tools;
 import org.geoscrape.util.UserAgentFaker;
 import org.geoscrape.util.WebClient;
