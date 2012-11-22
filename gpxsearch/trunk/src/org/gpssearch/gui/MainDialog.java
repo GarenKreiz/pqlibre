@@ -39,16 +39,17 @@ import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolTip;
 import org.geoscrape.Cache;
 import org.geoscrape.ListSearcher;
 import org.geoscrape.Location;
 import org.geoscrape.Login;
+import org.geoscrape.util.Tools;
 import org.gpssearch.SearcherProgress;
 import org.gpssearch.UserIdManager;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 
 /**
  * The main application dialog. Offers the user an interface to select cache
@@ -119,6 +120,20 @@ public class MainDialog extends Dialog
 	private TabFolder tabFolder;
 	private TabItem tabSearch;
 	private TabItem tabMyfinds;
+	private Text textOtherUsername;
+	private Text textFoundSince;
+
+	private Button btnMine;
+
+	private Button btnUser;
+
+	private Spinner cacheCount;
+
+	private Button btnFoundAfter;
+
+	private Button btnLast;
+
+	private Button btnAll;
 
 	/**
 	 * Create the dialog.
@@ -182,6 +197,54 @@ public class MainDialog extends Dialog
 		tabFolder = new TabFolder(container, SWT.NONE);
 		tabFolder.setBounds(10, 20, 645, 632);
 
+		setUpSearch();
+
+		setUpMyfinds();
+
+		Link link = new Link(container, SWT.NONE);
+		Font f = link.getFont();
+		FontData[] fds = f.getFontData();
+		for (FontData fd : fds)
+		{
+			fd.setHeight(7);
+		}
+		Font nu = new Font(Display.getCurrent(), fds);
+		link.setFont(nu);
+		link.setTouchEnabled(true);
+		link.setToolTipText("Click link to visit site");
+		link.setBounds(536, 0, 169, 21);
+		link.setText("Maps by <a href=\"http://gpsvisualizer.com\">GPSVisualizer.com</a>");
+
+		link.addListener(SWT.Selection, new Listener()
+		{
+			// handle clicks on the link
+			public void handleEvent(Event event)
+			{
+				try
+				{
+					if (Desktop.isDesktopSupported())
+					{
+						Desktop d = Desktop.getDesktop();
+						d.browse(new URI(event.text));
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+
+		});
+
+		applyProperties();
+		return container;
+	}
+
+	/**
+	 * 
+	 */
+	private void setUpSearch()
+	{
 		tabSearch = new TabItem(tabFolder, SWT.NONE);
 		tabSearch.setText("Cache search");
 
@@ -190,7 +253,7 @@ public class MainDialog extends Dialog
 		tabSearch.setControl(searchComposite);
 
 		btnIgnoreFound = new Button(searchComposite, SWT.CHECK);
-		btnIgnoreFound.setBounds(123, 417,107, 26);
+		btnIgnoreFound.setBounds(123, 417, 107, 26);
 		btnIgnoreFound.setToolTipText("Ignore caches you have already found");
 		btnIgnoreFound.setSelection(true);
 		btnIgnoreFound.setText("Ignore found");
@@ -244,7 +307,9 @@ public class MainDialog extends Dialog
 			@Override
 			public void widgetSelected(SelectionEvent e)
 			{
+				afterDateField.setEnabled(btnPlacedAfter.getSelection());
 			}
+
 		});
 		btnPlacedAfter.setBounds(10, 321, 138, 26);
 		btnPlacedAfter.setText("Placed on or after");
@@ -264,11 +329,6 @@ public class MainDialog extends Dialog
 		afterDateField.setToolTipText("Enter date in " + dateFormat + " format.");
 		afterDateField.setBounds(156, 321, 148, 21);
 
-		btnPlacedBefore = new Button(searchComposite, SWT.CHECK);
-		btnPlacedBefore.setToolTipText("Only show caches placed on or before the specified date");
-		btnPlacedBefore.setText("Placed on or before");
-		btnPlacedBefore.setBounds(10, 353, 138, 26);
-
 		beforeDateField = new Text(searchComposite, SWT.BORDER);
 		beforeDateField.addFocusListener(new FocusAdapter()
 		{
@@ -284,18 +344,25 @@ public class MainDialog extends Dialog
 		beforeDateField.setToolTipText("Enter date in " + dateFormat + " format.");
 		beforeDateField.setBounds(156, 353, 148, 21);
 
+		btnPlacedBefore = new Button(searchComposite, SWT.CHECK);
+		btnPlacedBefore.setToolTipText("Only show caches placed on or before the specified date");
+		btnPlacedBefore.setText("Placed on or before");
+		btnPlacedBefore.setBounds(10, 353, 138, 26);
+		btnPlacedBefore.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				beforeDateField.setEnabled(btnPlacedBefore.getSelection());
+			}
+
+		});
+
 		sizeGroup = new Group(searchComposite, SWT.NONE);
 		sizeGroup.setBounds(10, 175, 239, 140);
 
 		btnMicroSize = new Button(sizeGroup, SWT.CHECK);
 		btnMicroSize.setEnabled(false);
-		btnMicroSize.addSelectionListener(new SelectionAdapter()
-		{
-			@Override
-			public void widgetSelected(SelectionEvent e)
-			{
-			}
-		});
 		btnMicroSize.setText("Micro");
 		btnMicroSize.setBounds(10, 10, 63, 26);
 
@@ -407,6 +474,7 @@ public class MainDialog extends Dialog
 				{
 					btnHasNotBeen.setSelection(false);
 				}
+				foundInlastDaysField.setEnabled(btnFoundInLast.getSelection());
 			}
 		});
 		btnFoundInLast.setBounds(10, 385, 107, 26);
@@ -510,15 +578,12 @@ public class MainDialog extends Dialog
 				{
 					// unselect incompatible button
 					btnFoundInLast.setSelection(false);
+					foundInlastDaysField.setEnabled(false);
 				}
 			}
 		});
 		btnHasNotBeen.setBounds(255, 385, 173, 26);
 		btnHasNotBeen.setText("Has not been found");
-
-		btnRequireFav = new Button(searchComposite, SWT.CHECK);
-		btnRequireFav.setText("Has at least ");
-		btnRequireFav.setBounds(10, 481, 107, 26);
 
 		favouritePoints = new Spinner(searchComposite, SWT.BORDER);
 		favouritePoints.setPageIncrement(1);
@@ -526,6 +591,18 @@ public class MainDialog extends Dialog
 		favouritePoints.setMinimum(1);
 		favouritePoints.setSelection(1);
 		favouritePoints.setBounds(116, 486, 67, 21);
+
+		btnRequireFav = new Button(searchComposite, SWT.CHECK);
+		btnRequireFav.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				favouritePoints.setEnabled(btnRequireFav.getSelection());
+			}
+		});
+		btnRequireFav.setText("Has at least ");
+		btnRequireFav.setBounds(10, 481, 107, 26);
 
 		lblFavouritePoints = new Label(searchComposite, SWT.NONE);
 		lblFavouritePoints.setText("favourite points");
@@ -567,51 +644,140 @@ public class MainDialog extends Dialog
 		keywordText.setEnabled(false);
 		keywordText.setBounds(183, 513, 203, 21);
 
+	}
+
+	/**
+	 * 
+	 */
+	private void setUpMyfinds()
+	{
 		tabMyfinds = new TabItem(tabFolder, SWT.NONE);
 		tabMyfinds.setText("My finds");
-		
-
 		Composite myfindsComposite = new Composite(tabFolder, SWT.NONE);
+		myfindsComposite.setEnabled(false);
 		myfindsComposite.setBounds(10, 10, 622, 642);
 		tabMyfinds.setControl(myfindsComposite);
 
-		Link link = new Link(container, SWT.NONE);
-		Font f = link.getFont();
-		FontData[] fds = f.getFontData();
-		for (FontData fd : fds)
-		{
-			fd.setHeight(7);
-		}
-		Font nu = new Font(Display.getCurrent(), fds);
-		link.setFont(nu);
-		link.setTouchEnabled(true);
-		link.setToolTipText("Click link to visit site");
-		link.setBounds(536, 0, 169, 21);
-		link.setText("Maps by <a href=\"http://gpsvisualizer.com\">GPSVisualizer.com</a>");
+		Composite compositeWhose = new Composite(myfindsComposite, SWT.NONE);
+		compositeWhose.setBounds(10, 31, 337, 84);
 
-		link.addListener(SWT.Selection, new Listener()
+		Label lblWhoseCacheFinds = new Label(myfindsComposite, SWT.NONE);
+		lblWhoseCacheFinds.setBounds(10, 10, 326, 15);
+		lblWhoseCacheFinds.setText("Whose cache finds to download: ");
+
+		btnMine = new Button(compositeWhose, SWT.RADIO);
+		btnMine.addSelectionListener(new SelectionAdapter()
 		{
-			// handle clicks on the link
-			public void handleEvent(Event event)
+			@Override
+			public void widgetSelected(SelectionEvent e)
 			{
-				try
-				{
-					if (Desktop.isDesktopSupported())
-					{
-						Desktop d = Desktop.getDesktop();
-						d.browse(new URI(event.text));
-					}
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
+				checkMyfindsButtons();
 			}
+		});
+		btnMine.setBounds(10, 10, 103, 26);
+		btnMine.setSelection(true);
+		btnMine.setText("mine");
 
+		btnUser = new Button(compositeWhose, SWT.RADIO);
+		btnUser.setBounds(10, 42, 59, 26);
+		btnUser.setText("user: ");
+		btnUser.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				checkMyfindsButtons();
+			}
 		});
 
-		applyProperties();
-		return container;
+		textOtherUsername = new Text(compositeWhose, SWT.BORDER);
+		textOtherUsername.setBounds(74, 47, 183, 21);
+		textOtherUsername.setEnabled(false);
+
+		Label lblHowManyCaches = new Label(myfindsComposite, SWT.NONE);
+		lblHowManyCaches.setBounds(10, 120, 257, 15);
+		lblHowManyCaches.setText("How many caches to download:");
+
+		Composite compositeHowmany = new Composite(myfindsComposite, SWT.NONE);
+		compositeHowmany.setBounds(10, 141, 337, 121);
+
+		btnAll = new Button(compositeHowmany, SWT.RADIO);
+		btnAll.setBounds(10, 10, 103, 26);
+		btnAll.setSelection(true);
+		btnAll.setText("all");
+		btnAll.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				checkMyfindsButtons();
+			}
+		});
+
+		btnLast = new Button(compositeHowmany, SWT.RADIO);
+		btnLast.setBounds(10, 42, 49, 26);
+		btnLast.setText("last");
+		btnLast.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				checkMyfindsButtons();
+			}
+		});
+
+		cacheCount = new Spinner(compositeHowmany, SWT.BORDER);
+		cacheCount.setBounds(74, 42, 84, 21);
+		cacheCount.setMaximum(10000);
+		cacheCount.setMinimum(1);
+		cacheCount.setEnabled(false);
+
+		btnFoundAfter = new Button(compositeHowmany, SWT.RADIO);
+		btnFoundAfter.setBounds(10, 74, 118, 26);
+		btnFoundAfter.setText("all found since");
+		btnFoundAfter.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				checkMyfindsButtons();
+			}
+		});
+
+		textFoundSince = new Text(compositeHowmany, SWT.BORDER);
+		textFoundSince.setBounds(131, 79, 110, 21);
+		textFoundSince.setEnabled(false);
+		textFoundSince.setToolTipText("Use the same date format as you use on geocaching.com: " + this.dateFormat);
+		textFoundSince.addFocusListener(new FocusAdapter()
+		{
+			@Override
+			public void focusLost(FocusEvent e)
+			{
+				if (btnFoundAfter.getSelection())
+				{
+					verifyDate(textFoundSince);
+				}
+			}
+		});
+	}
+
+	/**
+	 * Check that the correct fiels are enabled/disabled on the "my finds" page.
+	 */
+	protected void checkMyfindsButtons()
+	{
+		if (textOtherUsername.getEnabled() != btnUser.getSelection())
+		{
+			textOtherUsername.setEnabled(btnUser.getSelection());
+		}
+		if (btnLast.getSelection() != cacheCount.getEnabled())
+		{
+			cacheCount.setEnabled(btnLast.getSelection());
+		}
+		if (btnFoundAfter.getSelection() != textFoundSince.getEnabled())
+		{
+			textFoundSince.setEnabled(btnFoundAfter.getSelection());
+		}
 	}
 
 	/**
@@ -622,40 +788,48 @@ public class MainDialog extends Dialog
 	 */
 	protected void verifyDate(final Text dateField)
 	{
-		String text = dateField.getText();
-		SimpleDateFormat df = new SimpleDateFormat(this.dateFormat);
-		try
+		if (dateField.getEnabled())
 		{
-			df.parse(text);
-		}
-		catch (ParseException e)
-		{
-			// something wrong, inform the user
 
-			Shell shell = new Shell(getShell());
-
-			ToolTip tip = new ToolTip(shell, SWT.BALLOON | SWT.ICON_INFORMATION);
-			tip.setText("I could not understand the date.");
-			int x = getShell().getBounds().x;
-			x += dateField.getBounds().x + dateField.getBounds().width;
-			int y = getShell().getBounds().y;
-			y += dateField.getBounds().y + dateField.getBounds().height * 1.5;
-
-			tip.setMessage("The date must be in the "
-					+ dateFormat
-					+ " format.\nThis is the same format you use on geocaching.com.\nTo change it, go to geocaching.com.");
-			tip.setLocation(x, y);
-
-			tip.setVisible(true);
-
-			// force the focus back to the input field
-			shell.getDisplay().asyncExec(new Runnable()
+			String text = dateField.getText();
+			SimpleDateFormat df = new SimpleDateFormat(this.dateFormat);
+			try
 			{
-				public void run()
+				df.parse(text);
+			}
+			catch (ParseException e)
+			{
+				// something wrong, inform the user
+
+				Shell shell = new Shell(getShell());
+
+				ToolTip tip = new ToolTip(shell, SWT.BALLOON | SWT.ICON_INFORMATION);
+				tip.setText("I could not understand the date.");
+				int x = getShell().getBounds().x;
+				x += dateField.getBounds().x + dateField.getBounds().width;
+				int y = getShell().getBounds().y;
+				y += dateField.getBounds().y + dateField.getBounds().height * 1.5;
+
+				tip.setMessage("The date must be in the "
+						+ dateFormat
+						+ " format.\nThis is the same format you use on geocaching.com.\nTo change it, go to geocaching.com.");
+				tip.setLocation(x, y);
+
+				tip.setVisible(true);
+				
+
+				// force the focus back to the input field
+				shell.getDisplay().asyncExec(new Runnable()
 				{
-					dateField.setFocus();
-				}
-			});
+					public void run()
+					{
+						if(dateField.isEnabled())
+						{							
+							dateField.setFocus();
+						}
+					}
+				});
+			}
 		}
 	}
 
@@ -685,7 +859,6 @@ public class MainDialog extends Dialog
 		{
 			properties.setProperty(e.getKey().toString(), e.getValue().toString());
 		}
-		applyProperties();
 	}
 
 	/**
@@ -768,6 +941,23 @@ public class MainDialog extends Dialog
 		{
 			keywordText.setEnabled(btnMatchKeyword.getSelection());
 		}
+		if (btnPlacedBefore != null && beforeDateField != null)
+		{
+			beforeDateField.setEnabled(btnPlacedBefore.getSelection());
+		}
+		if (btnPlacedAfter != null && afterDateField != null)
+		{
+			afterDateField.setEnabled(btnPlacedAfter.getSelection());
+		}
+		if (favouritePoints != null && btnRequireFav != null)
+		{
+			favouritePoints.setEnabled(btnRequireFav.getSelection());
+		}
+		if(foundInlastDaysField!=null && btnFoundInLast != null)
+		{
+			foundInlastDaysField.setEnabled(btnFoundInLast.getSelection());
+		}
+		checkMyfindsButtons();
 	}
 
 	/**
