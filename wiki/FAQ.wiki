@@ -26,7 +26,7 @@
            # Go to [http://www.geocaching.com/account/ManagePreferences.aspx]  
            # Change your date format to a format with only numbers, e.g. instead of 29/Dec/2012, use 29/12/2012.  
            # Change your language to English.    
-          If none of this helps, please file a new bug report on the [Issues] page.
+          If none of this helps, please file a new bug report on the [http://code.google.com/p/pqlibre/issues/list "Issues" page].
 
 
   __*Q*: I'm using 64-bit Windows but the 64-bit version does not work.
