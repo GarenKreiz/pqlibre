@@ -15,8 +15,8 @@ public class GuiTools
 	
 	/**
 	 * Force the font to be a certain number of pixels high.
-	 * @param f
-	 * @param size
+	 * @param c the control to set the font size for.
+	 * @param size the font size to set.
 	 */
 	public static void applyFontSize(Control c,int size)
 	{

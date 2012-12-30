@@ -11,6 +11,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -64,14 +65,14 @@ public class MainDialog extends Dialog
 	private Login login;
 	private UserIdManager idManager;
 	private String dateFormat;
-	
+
 	private Text locationInput;
 	private Text afterDateField;
 	private Text beforeDateField;
 	private Text keywordText;
 	private Text textOtherUsername;
 	private Text textFoundSince;
-	
+
 	private Button btnFilterSize;
 	private Button btnSmallSize;
 	private Button btnRegularSize;
@@ -124,13 +125,13 @@ public class MainDialog extends Dialog
 	private Spinner maximumresults;
 	private Spinner cacheCount;
 	private Spinner favouritePoints;
-	
+
 	private Combo searchRadiusUnits;
 
 	private TabFolder tabFolder;
-	
+
 	private TabItem tabSearch;
-	private TabItem tabMyfinds;	
+	private TabItem tabMyfinds;
 
 	private Label lblMaximumResults;
 	private Label lblFavouritePoints;
@@ -139,6 +140,9 @@ public class MainDialog extends Dialog
 	private Label lblSearchRadius;
 	private Label lblWhoseCacheFinds;
 	private Label lblHowManyCaches;
+
+	protected HashMap<Text, Button> belongButtonsUnselect;
+	protected HashMap<Text, Button> belongButtonsSelect;
 
 	/**
 	 * Create the dialog.
@@ -152,6 +156,8 @@ public class MainDialog extends Dialog
 		this.login = login;
 		this.dateFormat = login.getDateFormat();
 		properties = new Properties();
+		belongButtonsUnselect = new HashMap<Text, Button>();
+		belongButtonsSelect = new HashMap<Text, Button>();
 		try
 		{
 			idManager = new UserIdManager(login);
@@ -532,6 +538,7 @@ public class MainDialog extends Dialog
 		});
 		afterDateField.setToolTipText("Enter date in " + dateFormat + " format.");
 		afterDateField.setBounds(156, 321, 148, 21);
+		belongButtonsUnselect.put(afterDateField, btnPlacedAfter);
 
 		btnPlacedBefore = new Button(searchComposite, SWT.CHECK);
 		btnPlacedBefore.setToolTipText("Only show caches placed on or before the specified date");
@@ -561,6 +568,7 @@ public class MainDialog extends Dialog
 		});
 		beforeDateField.setToolTipText("Enter date in " + dateFormat + " format.");
 		beforeDateField.setBounds(156, 353, 148, 21);
+		belongButtonsUnselect.put(beforeDateField, btnPlacedBefore);
 
 		btnFoundInLast = new Button(searchComposite, SWT.CHECK);
 		btnFoundInLast.addSelectionListener(new SelectionAdapter()
@@ -670,7 +678,6 @@ public class MainDialog extends Dialog
 		btnIncludeLogs = new Button(searchComposite, SWT.CHECK);
 		btnIncludeLogs.setBounds(10, 545, 220, 26);
 		btnIncludeLogs.setText("Include full logs in output");
-
 	}
 
 	/**
@@ -792,6 +799,8 @@ public class MainDialog extends Dialog
 				}
 			}
 		});
+		belongButtonsUnselect.put(textFoundSince, btnFoundAfter);
+		belongButtonsSelect.put(textFoundSince, btnAll);
 	}
 
 	/**
@@ -819,8 +828,9 @@ public class MainDialog extends Dialog
 	 * 
 	 * @param dateField
 	 */
-	protected void verifyDate(final Text dateField)
+	protected boolean verifyDate(final Text dateField)
 	{
+		boolean res = true;
 		if (dateField.getEnabled())
 		{
 
@@ -853,16 +863,26 @@ public class MainDialog extends Dialog
 				// force the focus back to the input field
 				shell.getDisplay().asyncExec(new Runnable()
 				{
+
 					public void run()
 					{
-						if (dateField.isEnabled())
+						Button b = belongButtonsUnselect.get(dateField);
+						if (b != null)
 						{
-							dateField.setFocus();
+							b.setSelection(false);
 						}
+						b = belongButtonsSelect.get(dateField);
+						if (b != null)
+						{
+							b.setSelection(true);
+						}
+						dateField.setEnabled(false);
 					}
 				});
+				res = false;
 			}
 		}
+		return res;
 	}
 
 	/**
@@ -1110,16 +1130,40 @@ public class MainDialog extends Dialog
 			{
 				try
 				{
+
+					// get the properties
 					copyProperties();
 
 					Properties props = getSearchProperties();
+					TabItem[] sel = tabFolder.getSelection();
+
+					// check all date fields
+					if (sel[0].equals(tabSearch))
+					{
+						if (!verifyDate(afterDateField))
+						{
+							props.setProperty("btnPlacedAfter", "false");
+						}
+						if (!verifyDate(beforeDateField))
+						{
+							props.setProperty("btnPlacedBefore", "false");
+						}
+					}
+
+					else if (sel[0].equals(tabMyfinds))
+					{
+						if (!verifyDate(textFoundSince))
+						{
+							props.setProperty("btnAll", "true");
+							props.setProperty("btnFoundAfter", "false");
+						}
+					}
 					// save the properties
 					String fileName = System.getProperty("user.home") + File.separator + PROPERTIES_FILENAME;
 					props.store(new FileOutputStream(fileName, false), null);
 					// start the search
 					ListSearcher searcher = new ListSearcher(login);
 					Progress progr = null;
-					TabItem[] sel = tabFolder.getSelection();
 					if (sel.length > 0)
 					{
 						if (sel[0].equals(tabSearch))
