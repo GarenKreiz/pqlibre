@@ -116,6 +116,8 @@ public class MapGenerator implements IRunnableWithProgress
 			params.put("format", "google");
 			params.put("convert_format", "");
 			params.put("form", "google");
+			params.put("google_full_screen", "1");
+			params.put("zoom_control", "3d");
 			//leaving the following in skips the output page and returns the results directly
 			params.put("return_image", "1");
 			Map<String, byte[]> files = new HashMap<String, byte[]>();
@@ -128,6 +130,8 @@ public class MapGenerator implements IRunnableWithProgress
 
 			// parse the result, get the address
 			String contents = wc.getContentsAsString();
+			//enable mouswheel zoom
+			contents = contents.replace("gv_options.mousewheel_zoom = false;","gv_options.mousewheel_zoom = true;");
 			//create a temporary file
 			File tmpFile = File.createTempFile("gpxsearcher", ".html");
 			tmpFile.deleteOnExit();
