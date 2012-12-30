@@ -13,33 +13,19 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.geoscrape.Attribute;
 import org.geoscrape.Cache;
-import org.geoscrape.CacheLog;
 import org.geoscrape.CacheSize;
 import org.geoscrape.CacheType;
 import org.geoscrape.ListSearcher;
 import org.geoscrape.Location;
 import org.geoscrape.Login;
-import org.geoscrape.SearchCallback;
 
 /**
- * Keep track of the search progress, display info to the user and filter
- * incoming caches according to the search paramters.
- * 
+ * Progress bar monitor for general cache search.
  */
-public class SearcherProgress implements IRunnableWithProgress, SearchCallback
+public class SearcherProgress extends Progress
 {
-	private Integer totalCaches = null;
-	private int found = 0;
-	private int maxFind = 0;
-	private ListSearcher searcher;
-	private Login login;
-	private Properties properties;
-	private IProgressMonitor monitor;
-	private int lastPercentage = 0;
-	private List<Cache> caches = new ArrayList<Cache>();
 
 	// selection criteria
 	private boolean checkFavouritePoints;
@@ -63,21 +49,18 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 	private boolean checkAttributes;
 	private List<Attribute> excludedAttributes = new ArrayList<Attribute>();
 	private List<Attribute> includedAttributes = new ArrayList<Attribute>();
-	private UserIdManager idManager;
 	private boolean checkKeyword;
 	private String keyWord;
 
-	// format options
-	private boolean includeLogs;
-
+	/**
+	 * @param search
+	 * @param login
+	 * @param man
+	 * @param props
+	 */
 	public SearcherProgress(ListSearcher search, Login login, UserIdManager man, Properties props)
 	{
-		this.searcher = search;
-		this.searcher.setDelayDiffTerrSizeParsing(true);
-		this.login = login;
-		this.properties = props;
-		this.idManager = man;
-		this.searcher.registerSearchCallback(this);
+		super(search, login, man, props);
 		parseProperties();
 	}
 
@@ -278,87 +261,10 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 	}
 
 	/**
-	 * @see org.geoscrape.SearchCallback#found(org.geoscrape.Cache)
-	 */
-	@Override
-	public void found(Cache cache)
-	{
-		if (this.monitor.isCanceled())
-		{
-			searcher.abort();
-		}
-		else
-		{
-			found++;
-			// calculate percentage, if we can
-			if (totalCaches != null)
-			{
-				int percentage = (int) Math.round(100.0 * found / totalCaches);
-				int diff = percentage - lastPercentage;
-				if (diff > 0)
-				{
-					monitor.worked(diff);
-					lastPercentage = percentage;
-				}
-				monitor.setTaskName("Checking cache " + found + "/" + totalCaches);
-			}
-			// check if it fits pre-download criteria
-			if (checkPreDownload(cache))
-			{
-				try
-				{
-					// if so, download cache details
-					monitor.subTask("Downloading " + cache.getCacheCode());
-					try
-					{
-						cache.populate(login, false);
-						// check if we fulfil post-download criteria
-						if (checkPostDownload(cache))
-						{
-							// if so, save cache to list
-							caches.add(cache);
-							if (maxFind > 0 && caches.size() >= maxFind)
-							{
-								searcher.abort();
-							}
-							if (includeLogs)
-							{
-								// get the full logs
-								while (cache.retrieveMoreLogs(login))
-								{
-									// just loop until we run out of logs
-								}
-							}
-							// put all id logs in cache
-							for (CacheLog log : cache.getLogs())
-							{
-								if (log.getLoggedBy().getId() != null)
-								{
-									idManager.setId(log.getLoggedBy(), log.getLoggedBy().getId());
-								}
-							}
-						}
-					}
-					catch (Exception e)
-					{
-						System.out.println("Problem with cache " + cache.getCacheCode());
-						e.printStackTrace();
-					}
-					monitor.subTask("Found " + caches.size() + " matching caches.");
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-	}
-
-	/**
 	 * @param cache
 	 * @return
 	 */
-	private boolean checkPostDownload(Cache cache)
+	protected boolean checkPostDownload(Cache cache)
 	{
 		// check things that can only be checked after complete cache download:
 		// - check that it's not a premium cache that we don't have access to
@@ -387,6 +293,27 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 				}
 			}
 		}
+
+		if (maxFind > 0 && caches.size() >= maxFind)
+		{
+			searcher.abort();
+		}
+		try
+		{
+			if (includeLogs)
+			{
+				// get the full logs
+				while (cache.retrieveMoreLogs(login))
+				{
+					// just loop until we run out of logs
+				}
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			return false;
+		}
 		return true;
 	}
 
@@ -394,7 +321,7 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 	 * @param cache
 	 * @return
 	 */
-	private boolean checkPreDownload(Cache cache)
+	protected boolean checkPreDownload(Cache cache)
 	{
 		// check things that can be checked before complete cache download:
 		// - number of favourite points
@@ -503,16 +430,6 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 	}
 
 	/**
-	 * @see org.geoscrape.SearchCallback#totalNumber(int)
-	 */
-	@Override
-	public void totalNumber(int n)
-	{
-		totalCaches = n;
-		monitor.setTaskName("Populating caches...");
-	}
-
-	/**
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
@@ -550,10 +467,4 @@ public class SearcherProgress implements IRunnableWithProgress, SearchCallback
 		}
 		monitor.done();
 	}
-
-	public List<Cache> getCaches()
-	{
-		return this.caches;
-	}
-
 }

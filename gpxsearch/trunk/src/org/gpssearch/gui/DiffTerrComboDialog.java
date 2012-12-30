@@ -94,11 +94,13 @@ public class DiffTerrComboDialog extends Dialog
 		fd_btnCancel.right = new FormAttachment(100, -23);
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.setText("Cancel");
+		GuiTools.applyDefaultFontSize(btnCancel);
 
 		Label lblDifficulty = new Label(shlDifficultyterrain, SWT.CENTER);
 		FormData fd_lblDifficulty = new FormData();
 		lblDifficulty.setLayoutData(fd_lblDifficulty);
 		lblDifficulty.setText("Difficulty");
+		GuiTools.applyDefaultFontSize(lblDifficulty);
 
 		Label lblTerrain = new Label(shlDifficultyterrain, SWT.NONE);
 		FormData fd_lblTerrain = new FormData();
@@ -106,6 +108,7 @@ public class DiffTerrComboDialog extends Dialog
 		fd_lblTerrain.left = new FormAttachment(0, 367);
 		lblTerrain.setLayoutData(fd_lblTerrain);
 		lblTerrain.setText("Terrain");
+		GuiTools.applyDefaultFontSize(lblTerrain);
 
 		Button btnSelectAll = new Button(shlDifficultyterrain, SWT.NONE);
 		btnSelectAll.addSelectionListener(new SelectionAdapter()
@@ -123,6 +126,7 @@ public class DiffTerrComboDialog extends Dialog
 		fd_btnSelectAll.left = new FormAttachment(0, 10);
 		btnSelectAll.setLayoutData(fd_btnSelectAll);
 		btnSelectAll.setText("Select all");
+		GuiTools.applyDefaultFontSize(btnSelectAll);
 
 		Button btnInvertSelection = new Button(shlDifficultyterrain, SWT.NONE);
 		btnInvertSelection.addSelectionListener(new SelectionAdapter()
@@ -141,6 +145,7 @@ public class DiffTerrComboDialog extends Dialog
 		fd_btnInvertSelection.right = new FormAttachment(0, 205);
 		btnInvertSelection.setLayoutData(fd_btnInvertSelection);
 		btnInvertSelection.setText("Invert selection");
+		GuiTools.applyDefaultFontSize(btnInvertSelection);
 
 		Composite composite = new Composite(shlDifficultyterrain, SWT.NONE);
 		fd_lblDifficulty.right = new FormAttachment(composite, -6);
@@ -173,13 +178,15 @@ public class DiffTerrComboDialog extends Dialog
 				{
 					if (signs[y] == null)
 					{
-						new Label(composite, SWT.NONE);
+						Label label = new Label(composite, SWT.NONE);
+						GuiTools.applyDefaultFontSize(label);
 					}
 					else
 					{
 
 						Button btnT = new Button(composite, SWT.CHECK);
 						btnT.setText("T=" + signs[y]);
+						GuiTools.applyDefaultFontSize(btnT);
 						allButtons.add(btnT);
 						terrMasterButtons.add(btnT);
 						btnT.addSelectionListener(new SelectionAdapter()
@@ -199,6 +206,7 @@ public class DiffTerrComboDialog extends Dialog
 
 						Button btnD = new Button(composite, SWT.CHECK);
 						btnD.setText("D=" + signs[x]);
+						GuiTools.applyDefaultFontSize(btnD);
 						allButtons.add(btnD);
 						diffMasterButtons.add(btnD);
 						btnD.addSelectionListener(new SelectionAdapter()
@@ -214,6 +222,7 @@ public class DiffTerrComboDialog extends Dialog
 					{
 						Button btn = new Button(composite, SWT.CHECK);
 						btn.setText(signs[x] + "/" + signs[y]);
+						GuiTools.applyDefaultFontSize(btn);
 						allButtons.add(btn);
 						selectionButtons.add(btn);
 						terrButtons.get(y - 1).add(btn);
@@ -248,6 +257,7 @@ public class DiffTerrComboDialog extends Dialog
 		fd_btnOk.right = new FormAttachment(btnCancel, -6);
 		btnOk.setLayoutData(fd_btnOk);
 		btnOk.setText("OK");
+		GuiTools.applyDefaultFontSize(btnOk);
 		loadProperties();
 
 	}

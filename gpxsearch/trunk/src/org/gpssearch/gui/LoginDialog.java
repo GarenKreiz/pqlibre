@@ -78,6 +78,7 @@ public class LoginDialog extends Dialog
 		Label lblUsername = new Label(shell, SWT.NONE);
 		lblUsername.setBounds(10, 29, 68, 15);
 		lblUsername.setText("Username:");
+		GuiTools.applyDefaultFontSize(lblUsername);
 
 		usernameField = new Text(shell, SWT.BORDER);
 		usernameField.addKeyListener(new KeyAdapter() {
@@ -101,10 +102,12 @@ public class LoginDialog extends Dialog
 		{
 			usernameField.setText(username);
 		}
+		GuiTools.applyDefaultFontSize(usernameField);
 
 		Label lblPassword = new Label(shell, SWT.NONE);
 		lblPassword.setBounds(10, 86, 68, 15);
 		lblPassword.setText("Password:");
+		GuiTools.applyDefaultFontSize(lblPassword);
 
 		passwordField = new Text(shell, SWT.BORDER | SWT.PASSWORD);
 		passwordField.addKeyListener(new KeyAdapter() {
@@ -132,11 +135,13 @@ public class LoginDialog extends Dialog
 		{
 			passwordField.setText(password);
 		}
+		GuiTools.applyDefaultFontSize(passwordField);
 
 		checkboxRemember = new Button(shell, SWT.CHECK);
 		checkboxRemember.setSelection(remember);
 		checkboxRemember.setBounds(10, 156, 212, 26);
 		checkboxRemember.setText("Remember login");
+		GuiTools.applyDefaultFontSize(checkboxRemember);
 
 		Button btnCancel = new Button(shell, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter()
@@ -153,6 +158,7 @@ public class LoginDialog extends Dialog
 		});
 		btnCancel.setBounds(264, 158, 81, 24);
 		btnCancel.setText("Cancel");
+		GuiTools.applyDefaultFontSize(btnCancel);
 
 		Button btnLogin = new Button(shell, SWT.NONE);
 		btnLogin.addSelectionListener(new SelectionAdapter()
@@ -169,6 +175,7 @@ public class LoginDialog extends Dialog
 		});
 		btnLogin.setBounds(264, 128, 81, 24);
 		btnLogin.setText("Login");
+		GuiTools.applyDefaultFontSize(btnLogin);
 		shell.setTabList(new Control[] { usernameField, passwordField,
 				checkboxRemember, btnLogin, btnCancel });
 

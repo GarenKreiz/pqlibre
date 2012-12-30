@@ -98,6 +98,7 @@ public class AttributeDialog extends Dialog
 		fd_btnOk.left = new FormAttachment(0, 315);
 		btnOk.setLayoutData(fd_btnOk);
 		btnOk.setText("OK");
+		GuiTools.applyDefaultFontSize(btnOk);
 
 		Button btnCancel = new Button(shlAttributes, SWT.NONE);
 		btnCancel.addSelectionListener(new SelectionAdapter()
@@ -114,6 +115,7 @@ public class AttributeDialog extends Dialog
 		fd_btnCancel.left = new FormAttachment(btnOk, 3);
 		btnCancel.setLayoutData(fd_btnCancel);
 		btnCancel.setText("Cancel");
+		GuiTools.applyDefaultFontSize(btnCancel);
 
 		ScrolledComposite scrolledComposite = new ScrolledComposite(shlAttributes, SWT.BORDER | SWT.V_SCROLL);
 		scrolledComposite.setAlwaysShowScrollBars(true);
@@ -131,6 +133,7 @@ public class AttributeDialog extends Dialog
 
 		Label lblNewLabel = new Label(composite_2, SWT.NONE);
 		lblNewLabel.setText("Attribute                            ");
+		GuiTools.applyDefaultFontSize(lblNewLabel);
 
 		Composite composite_3 = new Composite(composite_2, SWT.NONE);
 		composite_3.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
@@ -138,14 +141,19 @@ public class AttributeDialog extends Dialog
 
 		Label lblInclude = new Label(composite_3, SWT.NONE);
 		lblInclude.setText("Include");
-		new Label(composite_3, SWT.NONE);
-
+		GuiTools.applyDefaultFontSize(lblInclude);
+		Label tmp = new Label(composite_3, SWT.NONE);
+		GuiTools.applyDefaultFontSize(tmp);
+			
 		Label lblExclude = new Label(composite_3, SWT.NONE);
 		lblExclude.setText("Exclude");
-		new Label(composite_3, SWT.NONE);
+		GuiTools.applyDefaultFontSize(lblExclude);
+		tmp = new Label(composite_3, SWT.NONE);
+		GuiTools.applyDefaultFontSize(tmp);
 
 		Label lblIgnore = new Label(composite_3, SWT.NONE);
 		lblIgnore.setText("Ignore");
+		GuiTools.applyDefaultFontSize(lblIgnore);
 
 		// add all attributes
 		for (Attribute a : Attribute.values())
@@ -153,6 +161,7 @@ public class AttributeDialog extends Dialog
 			attributes.add(a);
 			Label lblFoo = new Label(composite_2, SWT.NONE);
 			lblFoo.setText(a.toString());
+			GuiTools.applyDefaultFontSize(lblFoo);
 
 			Composite composite_1 = new Composite(composite_2, SWT.NONE);
 			composite_1.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false, 1, 1));
@@ -161,14 +170,17 @@ public class AttributeDialog extends Dialog
 			Button includeButton = new Button(composite_1, SWT.RADIO);
 			new Label(composite_1, SWT.NONE);
 			includeList.add(includeButton);
+			GuiTools.applyDefaultFontSize(includeButton);
 
 			Button excludeButton = new Button(composite_1, SWT.RADIO);
 			new Label(composite_1, SWT.NONE);
 			excludeList.add(excludeButton);
+			GuiTools.applyDefaultFontSize(excludeButton);
 
 			Button ignoreButton = new Button(composite_1, SWT.RADIO);
 			ignoreButton.setSelection(true);
 			ignoreList.add(ignoreButton);
+			GuiTools.applyDefaultFontSize(ignoreButton);
 		}
 		scrolledComposite.setContent(composite_2);
 		scrolledComposite.setMinSize(composite_2.computeSize(SWT.DEFAULT, SWT.DEFAULT));

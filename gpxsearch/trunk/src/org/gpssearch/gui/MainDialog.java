@@ -24,14 +24,11 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
@@ -47,7 +44,8 @@ import org.geoscrape.Cache;
 import org.geoscrape.ListSearcher;
 import org.geoscrape.Location;
 import org.geoscrape.Login;
-import org.geoscrape.util.Tools;
+import org.gpssearch.MyCachesProgress;
+import org.gpssearch.Progress;
 import org.gpssearch.SearcherProgress;
 import org.gpssearch.UserIdManager;
 
@@ -62,10 +60,18 @@ public class MainDialog extends Dialog
 {
 	private static final String PROPERTIES_FILENAME = ".gpxexporter.properties";
 
+	private Properties properties;
+	private Login login;
+	private UserIdManager idManager;
+	private String dateFormat;
+	
 	private Text locationInput;
 	private Text afterDateField;
 	private Text beforeDateField;
-	private Group sizeGroup;
+	private Text keywordText;
+	private Text textOtherUsername;
+	private Text textFoundSince;
+	
 	private Button btnFilterSize;
 	private Button btnSmallSize;
 	private Button btnRegularSize;
@@ -77,9 +83,6 @@ public class MainDialog extends Dialog
 	private Button btnPlacedBefore;
 	private Button btnPlacedAfter;
 	private Button btnFilterType;
-	private Group typeGroup;
-	private String dateFormat;
-	private Properties properties;
 	private Button btnNotChosenSize;
 	private Button btnTraditional;
 	private Button btnVirtualType;
@@ -99,41 +102,43 @@ public class MainDialog extends Dialog
 	private Button btnIgnoreFound;
 	private Button btnIgnoreDisabled;
 	private Button btnHasTrackable;
+	private Button btnLast;
+	private Button btnUseHomeLocation;
+	private Button btnEditAttributes;
+	private Button btnEditDT;
+	private Button btnAll;
+	private Button btnFoundAfter;
+	private Button btnMine;
+	private Button btnUser;
+	private Button btnHasNotBeen;
+	private Button btnRequireFav;
+	private Button btnIncludeLogs;
+	private Button btnMatchKeyword;
+	private Button btnFilterDifficultyterrain;
+
+	private Group sizeGroup;
+	private Group typeGroup;
 
 	private Spinner foundInlastDaysField;
 	private Spinner searchradius;
 	private Spinner maximumresults;
-	private Label lblMaximumResults;
-	private Button btnHasNotBeen;
-	private Button btnRequireFav;
-	private Spinner favouritePoints;
-	private Label lblFavouritePoints;
-	private Combo searchRadiusUnits;
-	private Button btnFilterDifficultyterrain;
-	private Login login;
-	private UserIdManager idManager;
-
-	private Button btnIncludeLogs;
-	private Text keywordText;
-
-	private Button btnMatchKeyword;
-	private TabFolder tabFolder;
-	private TabItem tabSearch;
-	private TabItem tabMyfinds;
-	private Text textOtherUsername;
-	private Text textFoundSince;
-
-	private Button btnMine;
-
-	private Button btnUser;
-
 	private Spinner cacheCount;
+	private Spinner favouritePoints;
+	
+	private Combo searchRadiusUnits;
 
-	private Button btnFoundAfter;
+	private TabFolder tabFolder;
+	
+	private TabItem tabSearch;
+	private TabItem tabMyfinds;	
 
-	private Button btnLast;
-
-	private Button btnAll;
+	private Label lblMaximumResults;
+	private Label lblFavouritePoints;
+	private Label lblDays;
+	private Label lblLocation;
+	private Label lblSearchRadius;
+	private Label lblWhoseCacheFinds;
+	private Label lblHowManyCaches;
 
 	/**
 	 * Create the dialog.
@@ -177,7 +182,7 @@ public class MainDialog extends Dialog
 	protected void configureShell(Shell shell)
 	{
 		super.configureShell(shell);
-		shell.setText("Pocket Query Libre");
+		shell.setText("PQLibre 0.5 (alpha)");
 		shell.setImages(getParentShell().getImages());
 	}
 
@@ -201,15 +206,10 @@ public class MainDialog extends Dialog
 
 		setUpMyfinds();
 
+		setAllFontSizes();
+
 		Link link = new Link(container, SWT.NONE);
-		Font f = link.getFont();
-		FontData[] fds = f.getFontData();
-		for (FontData fd : fds)
-		{
-			fd.setHeight(7);
-		}
-		Font nu = new Font(Display.getCurrent(), fds);
-		link.setFont(nu);
+		GuiTools.applyFontSize(link, 7);
 		link.setTouchEnabled(true);
 		link.setToolTipText("Click link to visit site");
 		link.setBounds(536, 0, 169, 21);
@@ -241,6 +241,32 @@ public class MainDialog extends Dialog
 	}
 
 	/**
+	 * Iterate over all declared fields. If a field is an instance of Control,
+	 * set the font size to default.
+	 */
+	private void setAllFontSizes()
+	{
+		Field[] fields = getClass().getDeclaredFields();
+		for (Field f : fields)
+		{
+			Object o;
+			try
+			{
+				o = f.get(this);
+				if (o instanceof Control)
+				{
+					GuiTools.applyDefaultFontSize((Control) o);
+				}
+			}
+			catch (Exception e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	/**
 	 * 
 	 */
 	private void setUpSearch()
@@ -252,13 +278,7 @@ public class MainDialog extends Dialog
 		searchComposite.setBounds(10, 10, 622, 632);
 		tabSearch.setControl(searchComposite);
 
-		btnIgnoreFound = new Button(searchComposite, SWT.CHECK);
-		btnIgnoreFound.setBounds(123, 417, 107, 26);
-		btnIgnoreFound.setToolTipText("Ignore caches you have already found");
-		btnIgnoreFound.setSelection(true);
-		btnIgnoreFound.setText("Ignore found");
-
-		Label lblLocation = new Label(searchComposite, SWT.NONE);
+		lblLocation = new Label(searchComposite, SWT.NONE);
 		lblLocation.setBounds(10, 10, 105, 15);
 		lblLocation.setText("Location:");
 
@@ -274,22 +294,55 @@ public class MainDialog extends Dialog
 		locationInput.setToolTipText("Enter the coordinates of your search start point");
 		locationInput.setBounds(10, 31, 268, 21);
 
-		Label lblSearchRadius = new Label(searchComposite, SWT.NONE);
+		btnUseHomeLocation = new Button(searchComposite, SWT.NONE);
+		btnUseHomeLocation.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				if (login.getHomeLocation() != null)
+				{
+					String homeLocText = login.getHomeLocation().toString();
+					locationInput.setText(homeLocText);
+				}
+			}
+		});
+		btnUseHomeLocation.setBounds(284, 28, 124, 24);
+		btnUseHomeLocation.setText("Use home location");
+
+		lblSearchRadius = new Label(searchComposite, SWT.NONE);
 		lblSearchRadius.setBounds(10, 68, 105, 15);
 		lblSearchRadius.setText("Search radius:");
 
+		searchradius = new Spinner(searchComposite, SWT.BORDER);
+		searchradius.setDigits(1);
+		searchradius.setMaximum(10000);
+		searchradius.setMinimum(1);
+		searchradius.setSelection(100);
+		searchradius.setBounds(10, 89, 81, 21);
+
 		searchRadiusUnits = new Combo(searchComposite, SWT.READ_ONLY);
+		searchRadiusUnits.setToolTipText("Select search radius units");
 		searchRadiusUnits.setItems(new String[] { "km", "miles" });
 		searchRadiusUnits.setBounds(100, 89, 64, 23);
 		searchRadiusUnits.select(0);
+
+		lblMaximumResults = new Label(searchComposite, SWT.NONE);
+		lblMaximumResults.setText("Maximum results:");
+		lblMaximumResults.setBounds(213, 68, 105, 15);
+
+		maximumresults = new Spinner(searchComposite, SWT.BORDER);
+		maximumresults.setToolTipText("Select the maximum number of results returned. 0 means unlimited.");
+		maximumresults.setMaximum(100000);
+		maximumresults.setBounds(213, 89, 81, 21);
 
 		btnFilterDifficultyterrain = new Button(searchComposite, SWT.CHECK);
 		btnFilterDifficultyterrain.setToolTipText("Only caches with the selected D/T combos are found.");
 		btnFilterDifficultyterrain.setBounds(10, 116, 173, 26);
 		btnFilterDifficultyterrain.setText("Filter Difficulty/Terrain");
 
-		Button btnEdit = new Button(searchComposite, SWT.NONE);
-		btnEdit.addSelectionListener(new SelectionAdapter()
+		btnEditDT = new Button(searchComposite, SWT.NONE);
+		btnEditDT.addSelectionListener(new SelectionAdapter()
 		{
 			@Override
 			public void widgetSelected(SelectionEvent e)
@@ -297,8 +350,159 @@ public class MainDialog extends Dialog
 				openDTDialog();
 			}
 		});
-		btnEdit.setBounds(197, 118, 81, 24);
-		btnEdit.setText("Edit");
+		btnEditDT.setBounds(197, 118, 81, 24);
+		btnEditDT.setText("Edit");
+
+		btnFilterAttributes = new Button(searchComposite, SWT.CHECK);
+		btnFilterAttributes.setToolTipText("Only caches with the selected attributes are found");
+		btnFilterAttributes.setText("Filter attributes");
+		btnFilterAttributes.setBounds(353, 116, 131, 26);
+
+		btnEditAttributes = new Button(searchComposite, SWT.NONE);
+		btnEditAttributes.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				openAttributeDialog();
+			}
+		});
+		btnEditAttributes.setText("Edit");
+		btnEditAttributes.setBounds(490, 118, 81, 24);
+
+		btnFilterSize = new Button(searchComposite, SWT.CHECK);
+		btnFilterSize.setBounds(10, 148, 107, 26);
+		btnFilterSize.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				ableAll(sizeGroup, btnFilterSize.getSelection());
+			}
+		});
+		btnFilterSize
+				.setToolTipText("If checked, only selected cache sizes will be included. If unchecked, all cache sizes.");
+		btnFilterSize.setText("Filter size");
+
+		sizeGroup = new Group(searchComposite, SWT.NONE);
+		sizeGroup.setBounds(10, 175, 239, 140);
+
+		btnMicroSize = new Button(sizeGroup, SWT.CHECK);
+		btnMicroSize.setEnabled(false);
+		btnMicroSize.setText("Micro");
+		btnMicroSize.setBounds(10, 10, 63, 26);
+
+		btnOtherSize = new Button(sizeGroup, SWT.CHECK);
+		btnOtherSize.setEnabled(false);
+		btnOtherSize.setText("Other");
+		btnOtherSize.setBounds(128, 10, 63, 26);
+
+		btnSmallSize = new Button(sizeGroup, SWT.CHECK);
+		btnSmallSize.setEnabled(false);
+		btnSmallSize.setText("Small");
+		btnSmallSize.setBounds(10, 42, 63, 26);
+
+		btnUknownSize = new Button(sizeGroup, SWT.CHECK);
+		btnUknownSize.setEnabled(false);
+		btnUknownSize.setText("Unknown");
+		btnUknownSize.setBounds(128, 42, 95, 26);
+
+		btnRegularSize = new Button(sizeGroup, SWT.CHECK);
+		btnRegularSize.setEnabled(false);
+		btnRegularSize.setText("Regular");
+		btnRegularSize.setBounds(10, 74, 88, 26);
+
+		btnVirtualSize = new Button(sizeGroup, SWT.CHECK);
+		btnVirtualSize.setEnabled(false);
+		btnVirtualSize.setText("Virtual");
+		btnVirtualSize.setBounds(128, 74, 78, 26);
+
+		btnLargeSize = new Button(sizeGroup, SWT.CHECK);
+		btnLargeSize.setEnabled(false);
+		btnLargeSize.setText("Large");
+		btnLargeSize.setBounds(10, 106, 63, 26);
+
+		btnNotChosenSize = new Button(sizeGroup, SWT.CHECK);
+		btnNotChosenSize.setEnabled(false);
+		btnNotChosenSize.setText("Not chosen");
+		btnNotChosenSize.setBounds(128, 106, 95, 26);
+
+		btnFilterType = new Button(searchComposite, SWT.CHECK);
+		btnFilterType.setBounds(255, 148, 107, 26);
+		btnFilterType
+				.setToolTipText("If checked, only selected cache types will be included. If unchecked, all cache types.");
+		btnFilterType.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				ableAll(typeGroup, btnFilterType.getSelection());
+			}
+		});
+		btnFilterType.setText("Filter type");
+
+		typeGroup = new Group(searchComposite, SWT.NONE);
+		typeGroup.setBounds(255, 175, 372, 140);
+
+		btnTraditional = new Button(typeGroup, SWT.CHECK);
+		btnTraditional.setEnabled(false);
+		btnTraditional.setText("Traditional");
+		btnTraditional.setBounds(10, 10, 107, 26);
+
+		btnEvent = new Button(typeGroup, SWT.CHECK);
+		btnEvent.setEnabled(false);
+		btnEvent.setText("Event");
+		btnEvent.setBounds(123, 10, 95, 26);
+
+		btnCito = new Button(typeGroup, SWT.CHECK);
+		btnCito.setEnabled(false);
+		btnCito.setText("CITO");
+		btnCito.setBounds(240, 10, 95, 26);
+
+		btnMystery = new Button(typeGroup, SWT.CHECK);
+		btnMystery.setEnabled(false);
+		btnMystery.setText("Mystery");
+		btnMystery.setBounds(10, 42, 107, 26);
+
+		btnMegaEvent = new Button(typeGroup, SWT.CHECK);
+		btnMegaEvent.setEnabled(false);
+		btnMegaEvent.setText("Mega Event");
+		btnMegaEvent.setBounds(123, 42, 101, 26);
+
+		btnEarthcache = new Button(typeGroup, SWT.CHECK);
+		btnEarthcache.setEnabled(false);
+		btnEarthcache.setText("Earthcache");
+		btnEarthcache.setBounds(240, 42, 124, 26);
+
+		btnMulti = new Button(typeGroup, SWT.CHECK);
+		btnMulti.setEnabled(false);
+		btnMulti.setText("Multi");
+		btnMulti.setBounds(10, 74, 88, 26);
+
+		btnVirtualType = new Button(typeGroup, SWT.CHECK);
+		btnVirtualType.setEnabled(false);
+		btnVirtualType.setText("Virtual");
+		btnVirtualType.setBounds(123, 74, 95, 26);
+
+		btnWherigo = new Button(typeGroup, SWT.CHECK);
+		btnWherigo.setEnabled(false);
+		btnWherigo.setText("Wherigo");
+		btnWherigo.setBounds(240, 74, 95, 26);
+
+		btnWebcam = new Button(typeGroup, SWT.CHECK);
+		btnWebcam.setEnabled(false);
+		btnWebcam.setText("Webcam");
+		btnWebcam.setBounds(10, 106, 107, 26);
+
+		btnLetterbox = new Button(typeGroup, SWT.CHECK);
+		btnLetterbox.setEnabled(false);
+		btnLetterbox.setText("Letterbox");
+		btnLetterbox.setBounds(123, 106, 95, 26);
+
+		btnGpsAdventure = new Button(typeGroup, SWT.CHECK);
+		btnGpsAdventure.setEnabled(false);
+		btnGpsAdventure.setText("GPS adventure");
+		btnGpsAdventure.setBounds(240, 106, 109, 26);
 
 		btnPlacedAfter = new Button(searchComposite, SWT.CHECK);
 		btnPlacedAfter.setToolTipText("Only show caches placed on or after the specified date");
@@ -329,21 +533,6 @@ public class MainDialog extends Dialog
 		afterDateField.setToolTipText("Enter date in " + dateFormat + " format.");
 		afterDateField.setBounds(156, 321, 148, 21);
 
-		beforeDateField = new Text(searchComposite, SWT.BORDER);
-		beforeDateField.addFocusListener(new FocusAdapter()
-		{
-			@Override
-			public void focusLost(FocusEvent e)
-			{
-				if (btnPlacedBefore.getSelection())
-				{
-					verifyDate(beforeDateField);
-				}
-			}
-		});
-		beforeDateField.setToolTipText("Enter date in " + dateFormat + " format.");
-		beforeDateField.setBounds(156, 353, 148, 21);
-
 		btnPlacedBefore = new Button(searchComposite, SWT.CHECK);
 		btnPlacedBefore.setToolTipText("Only show caches placed on or before the specified date");
 		btnPlacedBefore.setText("Placed on or before");
@@ -358,111 +547,20 @@ public class MainDialog extends Dialog
 
 		});
 
-		sizeGroup = new Group(searchComposite, SWT.NONE);
-		sizeGroup.setBounds(10, 175, 239, 140);
-
-		btnMicroSize = new Button(sizeGroup, SWT.CHECK);
-		btnMicroSize.setEnabled(false);
-		btnMicroSize.setText("Micro");
-		btnMicroSize.setBounds(10, 10, 63, 26);
-
-		btnSmallSize = new Button(sizeGroup, SWT.CHECK);
-		btnSmallSize.setEnabled(false);
-		btnSmallSize.setText("Small");
-		btnSmallSize.setBounds(10, 42, 63, 26);
-
-		btnRegularSize = new Button(sizeGroup, SWT.CHECK);
-		btnRegularSize.setEnabled(false);
-		btnRegularSize.setText("Regular");
-		btnRegularSize.setBounds(10, 74, 88, 26);
-
-		btnOtherSize = new Button(sizeGroup, SWT.CHECK);
-		btnOtherSize.setEnabled(false);
-		btnOtherSize.setText("Other");
-		btnOtherSize.setBounds(128, 10, 63, 26);
-
-		btnUknownSize = new Button(sizeGroup, SWT.CHECK);
-		btnUknownSize.setEnabled(false);
-		btnUknownSize.setText("Unknown");
-		btnUknownSize.setBounds(128, 42, 95, 26);
-
-		btnVirtualSize = new Button(sizeGroup, SWT.CHECK);
-		btnVirtualSize.setEnabled(false);
-		btnVirtualSize.setText("Virtual");
-		btnVirtualSize.setBounds(128, 74, 78, 26);
-
-		btnLargeSize = new Button(sizeGroup, SWT.CHECK);
-		btnLargeSize.setEnabled(false);
-		btnLargeSize.setText("Large");
-		btnLargeSize.setBounds(10, 106, 63, 26);
-
-		btnNotChosenSize = new Button(sizeGroup, SWT.CHECK);
-		btnNotChosenSize.setEnabled(false);
-		btnNotChosenSize.setText("Not chosen");
-		btnNotChosenSize.setBounds(128, 106, 95, 26);
-
-		typeGroup = new Group(searchComposite, SWT.NONE);
-		typeGroup.setBounds(255, 175, 372, 140);
-
-		btnTraditional = new Button(typeGroup, SWT.CHECK);
-		btnTraditional.setEnabled(false);
-		btnTraditional.setText("Traditional");
-		btnTraditional.setBounds(10, 10, 107, 26);
-
-		btnVirtualType = new Button(typeGroup, SWT.CHECK);
-		btnVirtualType.setEnabled(false);
-		btnVirtualType.setText("Virtual");
-		btnVirtualType.setBounds(123, 74, 95, 26);
-
-		btnWebcam = new Button(typeGroup, SWT.CHECK);
-		btnWebcam.setEnabled(false);
-		btnWebcam.setText("Webcam");
-		btnWebcam.setBounds(10, 106, 107, 26);
-
-		btnMulti = new Button(typeGroup, SWT.CHECK);
-		btnMulti.setEnabled(false);
-		btnMulti.setText("Multi");
-		btnMulti.setBounds(10, 74, 88, 26);
-
-		btnMystery = new Button(typeGroup, SWT.CHECK);
-		btnMystery.setEnabled(false);
-		btnMystery.setText("Mystery");
-		btnMystery.setBounds(10, 42, 107, 26);
-
-		btnMegaEvent = new Button(typeGroup, SWT.CHECK);
-		btnMegaEvent.setEnabled(false);
-		btnMegaEvent.setText("Mega Event");
-		btnMegaEvent.setBounds(123, 42, 101, 26);
-
-		btnEvent = new Button(typeGroup, SWT.CHECK);
-		btnEvent.setEnabled(false);
-		btnEvent.setText("Event");
-		btnEvent.setBounds(123, 10, 95, 26);
-
-		btnLetterbox = new Button(typeGroup, SWT.CHECK);
-		btnLetterbox.setEnabled(false);
-		btnLetterbox.setText("Letterbox");
-		btnLetterbox.setBounds(123, 106, 95, 26);
-
-		btnCito = new Button(typeGroup, SWT.CHECK);
-		btnCito.setEnabled(false);
-		btnCito.setText("CITO");
-		btnCito.setBounds(240, 10, 95, 26);
-
-		btnGpsAdventure = new Button(typeGroup, SWT.CHECK);
-		btnGpsAdventure.setEnabled(false);
-		btnGpsAdventure.setText("GPS adventure");
-		btnGpsAdventure.setBounds(240, 106, 109, 26);
-
-		btnWherigo = new Button(typeGroup, SWT.CHECK);
-		btnWherigo.setEnabled(false);
-		btnWherigo.setText("Wherigo");
-		btnWherigo.setBounds(240, 74, 95, 26);
-
-		btnEarthcache = new Button(typeGroup, SWT.CHECK);
-		btnEarthcache.setEnabled(false);
-		btnEarthcache.setText("Earthcache");
-		btnEarthcache.setBounds(240, 42, 124, 26);
+		beforeDateField = new Text(searchComposite, SWT.BORDER);
+		beforeDateField.addFocusListener(new FocusAdapter()
+		{
+			@Override
+			public void focusLost(FocusEvent e)
+			{
+				if (btnPlacedBefore.getSelection())
+				{
+					verifyDate(beforeDateField);
+				}
+			}
+		});
+		beforeDateField.setToolTipText("Enter date in " + dateFormat + " format.");
+		beforeDateField.setBounds(156, 353, 148, 21);
 
 		btnFoundInLast = new Button(searchComposite, SWT.CHECK);
 		btnFoundInLast.addSelectionListener(new SelectionAdapter()
@@ -480,92 +578,15 @@ public class MainDialog extends Dialog
 		btnFoundInLast.setBounds(10, 385, 107, 26);
 		btnFoundInLast.setText("Found in last ");
 
-		Label lblDays = new Label(searchComposite, SWT.NONE);
-		lblDays.setBounds(192, 390, 57, 15);
-		lblDays.setText("days");
-
-		btnFilterAttributes = new Button(searchComposite, SWT.CHECK);
-		btnFilterAttributes.setToolTipText("Only caches with the selected attributes are found");
-		btnFilterAttributes.setText("Filter attributes");
-		btnFilterAttributes.setBounds(353, 116, 131, 26);
-
-		Button button_2 = new Button(searchComposite, SWT.NONE);
-		button_2.addSelectionListener(new SelectionAdapter()
-		{
-			@Override
-			public void widgetSelected(SelectionEvent e)
-			{
-				openAttributeDialog();
-			}
-		});
-		button_2.setText("Edit");
-		button_2.setBounds(490, 118, 81, 24);
-
-		btnIgnoreOwn = new Button(searchComposite, SWT.CHECK);
-		btnIgnoreOwn.setToolTipText("Ignore caches you own");
-		btnIgnoreOwn.setSelection(true);
-		btnIgnoreOwn.setBounds(10, 417, 107, 26);
-		btnIgnoreOwn.setText("Ignore own");
-
-		btnIgnoreDisabled = new Button(searchComposite, SWT.CHECK);
-		btnIgnoreDisabled.setToolTipText("Ignore caches that have been disabled");
-		btnIgnoreDisabled.setText("Ignore disabled");
-		btnIgnoreDisabled.setBounds(255, 417, 131, 26);
-
-		btnHasTrackable = new Button(searchComposite, SWT.CHECK);
-		btnHasTrackable.setToolTipText("Only show caches that contains trackables.");
-		btnHasTrackable.setText("Contains trackable");
-		btnHasTrackable.setBounds(10, 449, 154, 26);
-
-		btnFilterSize = new Button(searchComposite, SWT.CHECK);
-		btnFilterSize.setBounds(10, 148, 107, 26);
-		btnFilterSize.addSelectionListener(new SelectionAdapter()
-		{
-			@Override
-			public void widgetSelected(SelectionEvent e)
-			{
-				ableAll(sizeGroup, btnFilterSize.getSelection());
-			}
-		});
-		btnFilterSize
-				.setToolTipText("If checked, only selected cache sizes will be included. If unchecked, all cache sizes.");
-		btnFilterSize.setText("Filter size");
-
-		btnFilterType = new Button(searchComposite, SWT.CHECK);
-		btnFilterType.setBounds(255, 148, 107, 26);
-		btnFilterType
-				.setToolTipText("If checked, only selected cache types will be included. If unchecked, all cache types.");
-		btnFilterType.addSelectionListener(new SelectionAdapter()
-		{
-			@Override
-			public void widgetSelected(SelectionEvent e)
-			{
-				ableAll(typeGroup, btnFilterType.getSelection());
-			}
-		});
-		btnFilterType.setText("Filter type");
-
-		searchradius = new Spinner(searchComposite, SWT.BORDER);
-		searchradius.setDigits(1);
-		searchradius.setMaximum(10000);
-		searchradius.setMinimum(1);
-		searchradius.setSelection(100);
-		searchradius.setBounds(10, 89, 81, 21);
-
 		foundInlastDaysField = new Spinner(searchComposite, SWT.BORDER);
 		foundInlastDaysField.setMaximum(10000);
 		foundInlastDaysField.setMinimum(1);
 		foundInlastDaysField.setSelection(1);
-		foundInlastDaysField.setBounds(116, 390, 67, 21);
+		foundInlastDaysField.setBounds(118, 390, 67, 21);
 
-		maximumresults = new Spinner(searchComposite, SWT.BORDER);
-		maximumresults.setToolTipText("Select the maximum number of results returned. 0 means unlimited.");
-		maximumresults.setMaximum(100000);
-		maximumresults.setBounds(213, 89, 81, 21);
-
-		lblMaximumResults = new Label(searchComposite, SWT.NONE);
-		lblMaximumResults.setText("Maximum results:");
-		lblMaximumResults.setBounds(213, 68, 105, 15);
+		lblDays = new Label(searchComposite, SWT.NONE);
+		lblDays.setBounds(192, 390, 57, 15);
+		lblDays.setText("days");
 
 		btnHasNotBeen = new Button(searchComposite, SWT.CHECK);
 		btnHasNotBeen.setToolTipText("Only get caches that have not been found by anyone.");
@@ -585,12 +606,27 @@ public class MainDialog extends Dialog
 		btnHasNotBeen.setBounds(255, 385, 173, 26);
 		btnHasNotBeen.setText("Has not been found");
 
-		favouritePoints = new Spinner(searchComposite, SWT.BORDER);
-		favouritePoints.setPageIncrement(1);
-		favouritePoints.setMaximum(10000);
-		favouritePoints.setMinimum(1);
-		favouritePoints.setSelection(1);
-		favouritePoints.setBounds(116, 486, 67, 21);
+		btnIgnoreOwn = new Button(searchComposite, SWT.CHECK);
+		btnIgnoreOwn.setToolTipText("Ignore caches you own");
+		btnIgnoreOwn.setSelection(true);
+		btnIgnoreOwn.setBounds(10, 417, 107, 26);
+		btnIgnoreOwn.setText("Ignore own");
+
+		btnIgnoreFound = new Button(searchComposite, SWT.CHECK);
+		btnIgnoreFound.setBounds(123, 417, 107, 26);
+		btnIgnoreFound.setToolTipText("Ignore caches you have already found");
+		btnIgnoreFound.setSelection(true);
+		btnIgnoreFound.setText("Ignore found");
+
+		btnIgnoreDisabled = new Button(searchComposite, SWT.CHECK);
+		btnIgnoreDisabled.setToolTipText("Ignore caches that have been disabled");
+		btnIgnoreDisabled.setText("Ignore disabled");
+		btnIgnoreDisabled.setBounds(255, 417, 131, 26);
+
+		btnHasTrackable = new Button(searchComposite, SWT.CHECK);
+		btnHasTrackable.setToolTipText("Only show caches that contains trackables.");
+		btnHasTrackable.setText("Contains trackable");
+		btnHasTrackable.setBounds(10, 449, 154, 26);
 
 		btnRequireFav = new Button(searchComposite, SWT.CHECK);
 		btnRequireFav.addSelectionListener(new SelectionAdapter()
@@ -604,29 +640,16 @@ public class MainDialog extends Dialog
 		btnRequireFav.setText("Has at least ");
 		btnRequireFav.setBounds(10, 481, 107, 26);
 
+		favouritePoints = new Spinner(searchComposite, SWT.BORDER);
+		favouritePoints.setPageIncrement(1);
+		favouritePoints.setMaximum(10000);
+		favouritePoints.setMinimum(1);
+		favouritePoints.setSelection(1);
+		favouritePoints.setBounds(118, 486, 67, 21);
+
 		lblFavouritePoints = new Label(searchComposite, SWT.NONE);
 		lblFavouritePoints.setText("favourite points");
 		lblFavouritePoints.setBounds(192, 486, 112, 15);
-
-		Button btnNewButton = new Button(searchComposite, SWT.NONE);
-		btnNewButton.addSelectionListener(new SelectionAdapter()
-		{
-			@Override
-			public void widgetSelected(SelectionEvent e)
-			{
-				if (login.getHomeLocation() != null)
-				{
-					String homeLocText = login.getHomeLocation().toString();
-					locationInput.setText(homeLocText);
-				}
-			}
-		});
-		btnNewButton.setBounds(284, 28, 124, 24);
-		btnNewButton.setText("Use home location");
-
-		btnIncludeLogs = new Button(searchComposite, SWT.CHECK);
-		btnIncludeLogs.setBounds(10, 558, 196, 26);
-		btnIncludeLogs.setText("Include full logs in output");
 
 		btnMatchKeyword = new Button(searchComposite, SWT.CHECK);
 		btnMatchKeyword.addSelectionListener(new SelectionAdapter()
@@ -644,6 +667,10 @@ public class MainDialog extends Dialog
 		keywordText.setEnabled(false);
 		keywordText.setBounds(183, 513, 203, 21);
 
+		btnIncludeLogs = new Button(searchComposite, SWT.CHECK);
+		btnIncludeLogs.setBounds(10, 545, 220, 26);
+		btnIncludeLogs.setText("Include full logs in output");
+
 	}
 
 	/**
@@ -654,18 +681,19 @@ public class MainDialog extends Dialog
 		tabMyfinds = new TabItem(tabFolder, SWT.NONE);
 		tabMyfinds.setText("My finds");
 		Composite myfindsComposite = new Composite(tabFolder, SWT.NONE);
-		myfindsComposite.setEnabled(false);
 		myfindsComposite.setBounds(10, 10, 622, 642);
 		tabMyfinds.setControl(myfindsComposite);
 
 		Composite compositeWhose = new Composite(myfindsComposite, SWT.NONE);
+		compositeWhose.setEnabled(true);
 		compositeWhose.setBounds(10, 31, 337, 84);
 
-		Label lblWhoseCacheFinds = new Label(myfindsComposite, SWT.NONE);
+		lblWhoseCacheFinds = new Label(myfindsComposite, SWT.NONE);
 		lblWhoseCacheFinds.setBounds(10, 10, 326, 15);
 		lblWhoseCacheFinds.setText("Whose cache finds to download: ");
 
 		btnMine = new Button(compositeWhose, SWT.RADIO);
+		btnMine.setEnabled(true);
 		btnMine.addSelectionListener(new SelectionAdapter()
 		{
 			@Override
@@ -679,6 +707,7 @@ public class MainDialog extends Dialog
 		btnMine.setText("mine");
 
 		btnUser = new Button(compositeWhose, SWT.RADIO);
+		btnUser.setEnabled(true);
 		btnUser.setBounds(10, 42, 59, 26);
 		btnUser.setText("user: ");
 		btnUser.addSelectionListener(new SelectionAdapter()
@@ -692,16 +721,18 @@ public class MainDialog extends Dialog
 
 		textOtherUsername = new Text(compositeWhose, SWT.BORDER);
 		textOtherUsername.setBounds(74, 47, 183, 21);
-		textOtherUsername.setEnabled(false);
+		textOtherUsername.setEnabled(true);
 
-		Label lblHowManyCaches = new Label(myfindsComposite, SWT.NONE);
+		lblHowManyCaches = new Label(myfindsComposite, SWT.NONE);
 		lblHowManyCaches.setBounds(10, 120, 257, 15);
 		lblHowManyCaches.setText("How many caches to download:");
 
 		Composite compositeHowmany = new Composite(myfindsComposite, SWT.NONE);
+		compositeHowmany.setEnabled(true);
 		compositeHowmany.setBounds(10, 141, 337, 121);
 
 		btnAll = new Button(compositeHowmany, SWT.RADIO);
+		btnAll.setEnabled(true);
 		btnAll.setBounds(10, 10, 103, 26);
 		btnAll.setSelection(true);
 		btnAll.setText("all");
@@ -715,6 +746,7 @@ public class MainDialog extends Dialog
 		});
 
 		btnLast = new Button(compositeHowmany, SWT.RADIO);
+		btnLast.setEnabled(true);
 		btnLast.setBounds(10, 42, 49, 26);
 		btnLast.setText("last");
 		btnLast.addSelectionListener(new SelectionAdapter()
@@ -733,6 +765,7 @@ public class MainDialog extends Dialog
 		cacheCount.setEnabled(false);
 
 		btnFoundAfter = new Button(compositeHowmany, SWT.RADIO);
+		btnFoundAfter.setEnabled(true);
 		btnFoundAfter.setBounds(10, 74, 118, 26);
 		btnFoundAfter.setText("all found since");
 		btnFoundAfter.addSelectionListener(new SelectionAdapter()
@@ -816,15 +849,14 @@ public class MainDialog extends Dialog
 				tip.setLocation(x, y);
 
 				tip.setVisible(true);
-				
 
 				// force the focus back to the input field
 				shell.getDisplay().asyncExec(new Runnable()
 				{
 					public void run()
 					{
-						if(dateField.isEnabled())
-						{							
+						if (dateField.isEnabled())
+						{
 							dateField.setFocus();
 						}
 					}
@@ -953,7 +985,7 @@ public class MainDialog extends Dialog
 		{
 			favouritePoints.setEnabled(btnRequireFav.getSelection());
 		}
-		if(foundInlastDaysField!=null && btnFoundInLast != null)
+		if (foundInlastDaysField != null && btnFoundInLast != null)
 		{
 			foundInlastDaysField.setEnabled(btnFoundInLast.getSelection());
 		}
@@ -1070,8 +1102,8 @@ public class MainDialog extends Dialog
 	@Override
 	protected void createButtonsForButtonBar(Composite parent)
 	{
-		Button button_1 = createButton(parent, IDialogConstants.BACK_ID, "Search", true);
-		button_1.addSelectionListener(new SelectionAdapter()
+		Button btnSearch = createButton(parent, IDialogConstants.BACK_ID, "Search", true);
+		btnSearch.addSelectionListener(new SelectionAdapter()
 		{
 			@Override
 			public void widgetSelected(SelectionEvent e)
@@ -1086,13 +1118,25 @@ public class MainDialog extends Dialog
 					props.store(new FileOutputStream(fileName, false), null);
 					// start the search
 					ListSearcher searcher = new ListSearcher(login);
-					SearcherProgress progr = new SearcherProgress(searcher, login, idManager, props);
-					ProgressMonitorDialog progdialog = new ProgressMonitorDialog(getShell());
-					progdialog.run(true, true, progr);
-					List<Cache> caches = progr.getCaches();
-					ResultDialog resDiag = new ResultDialog(getShell(), SWT.APPLICATION_MODAL);
-					resDiag.open(caches, idManager, login.getUserName());
-					idManager.saveDb();
+					Progress progr = null;
+					TabItem[] sel = tabFolder.getSelection();
+					if (sel.length > 0)
+					{
+						if (sel[0].equals(tabSearch))
+						{
+							progr = new SearcherProgress(searcher, login, idManager, props);
+						}
+						else if (sel[0].equals(tabMyfinds))
+						{
+							progr = new MyCachesProgress(searcher, login, idManager, props);
+						}
+						ProgressMonitorDialog progdialog = new ProgressMonitorDialog(getShell());
+						progdialog.run(true, true, progr);
+						List<Cache> caches = progr.getCaches();
+						ResultDialog resDiag = new ResultDialog(getShell(), SWT.APPLICATION_MODAL);
+						resDiag.open(caches, idManager, login.getUserName());
+						idManager.saveDb();
+					}
 				}
 				catch (InvocationTargetException ex)
 				{
@@ -1108,7 +1152,9 @@ public class MainDialog extends Dialog
 				}
 			}
 		});
-		createButton(parent, IDialogConstants.CANCEL_ID, "Exit", false);
+		GuiTools.applyDefaultFontSize(btnSearch);
+		Button btnExit = createButton(parent, IDialogConstants.CANCEL_ID, "Exit", false);
+		GuiTools.applyDefaultFontSize(btnExit);
 	}
 
 	/**

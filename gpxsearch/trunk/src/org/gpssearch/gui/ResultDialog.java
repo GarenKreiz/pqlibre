@@ -126,6 +126,7 @@ public class ResultDialog extends Dialog
 		btnDone.setGrayed(false);
 		btnDone.setBounds(354, 174, 81, 24);
 		btnDone.setText("Done");
+		GuiTools.applyDefaultFontSize(btnDone);
 
 		btnSaveFile = new Button(shlSearchResults, SWT.NONE);
 		btnSaveFile.addSelectionListener(new SelectionAdapter()
@@ -169,6 +170,7 @@ public class ResultDialog extends Dialog
 		btnSaveFile.setEnabled(false);
 		btnSaveFile.setBounds(264, 174, 81, 24);
 		btnSaveFile.setText("Save file");
+		GuiTools.applyDefaultFontSize(btnSaveFile);
 
 		btnOpenInBrowser = new Button(shlSearchResults, SWT.NONE);
 		btnOpenInBrowser.addSelectionListener(new SelectionAdapter()
@@ -209,10 +211,12 @@ public class ResultDialog extends Dialog
 		btnOpenInBrowser.setEnabled(false);
 		btnOpenInBrowser.setBounds(145, 174, 113, 24);
 		btnOpenInBrowser.setText("Open in browser");
+		GuiTools.applyDefaultFontSize(btnOpenInBrowser);
 
 		resultText = new Label(shlSearchResults, SWT.NONE);
 		resultText.setBounds(42, 45, 393, 15);
 		resultText.setText("No caches found.");
+		GuiTools.applyDefaultFontSize(resultText);
 
 		btnDisplayMap = new Button(shlSearchResults, SWT.NONE);
 		btnDisplayMap.addSelectionListener(new SelectionAdapter()
@@ -226,6 +230,7 @@ public class ResultDialog extends Dialog
 		btnDisplayMap.setEnabled(false);
 		btnDisplayMap.setBounds(38, 174, 101, 24);
 		btnDisplayMap.setText("Show on map");
+		GuiTools.applyDefaultFontSize(btnDisplayMap);
 
 	}
 

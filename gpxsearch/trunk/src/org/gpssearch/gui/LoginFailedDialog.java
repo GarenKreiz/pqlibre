@@ -68,11 +68,13 @@ public class LoginFailedDialog extends Dialog
 		});
 		btnOk.setBounds(79, 66, 81, 24);
 		btnOk.setText("OK");
+		GuiTools.applyDefaultFontSize(btnOk);
 		
 		Label lblLoginFailed = new Label(shell, SWT.NONE);
 		lblLoginFailed.setAlignment(SWT.CENTER);
 		lblLoginFailed.setBounds(31, 27, 176, 15);
 		lblLoginFailed.setText("Login failed.");
+		GuiTools.applyDefaultFontSize(lblLoginFailed);
 
 	}
 
