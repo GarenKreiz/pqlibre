@@ -11,18 +11,17 @@
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
                 <attribute name="Rsrc-Main-Class" value="org.gpssearch.Exporter"/>
                 <attribute name="Class-Path" value="."/>
-            	<attribute name="Rsrc-Class-Path" value="./ org.hamcrest.core_1.1.0.v20090501071000.jar swt.jar org.eclipse.core.commands_3.6.1.v20120521-2329.jar org.eclipse.equinox.common_3.6.100.v20120522-1841.jar org.eclipse.jface_3.8.0.v20120521-2329.jar org.eclipse.osgi_3.8.0.v20120529-1548.jar org.eclipse.ui.workbench_3.103.0.v20120530-1824.jar"/>
+            	<attribute name="Rsrc-Class-Path" value="./ swt.jar org.eclipse.core.commands_3.6.1.v20120814-150512.jar org.eclipse.equinox.common_3.6.100.v20120522-1841.jar org.eclipse.jface_3.8.101.v20121026-132746.jar org.eclipse.osgi_3.8.1.v20120830-144521.jar org.eclipse.ui.workbench_3.104.0.v20121219-151754.jar"/>
             	            </manifest>
             <zipfileset src="jar-in-jar-loader.zip"/>
             <fileset dir="bin"/>
             <fileset dir="." includes="icon*.png"/>
             <fileset dir="." includes="diftersiz.db"/>
-            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.hamcrest.core_1.1.0.v20090501071000.jar"/>
-            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.core.commands_3.6.1.v20120521-2329.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.core.commands_3.6.1.v20120814-150512.jar"/>
             <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.equinox.common_3.6.100.v20120522-1841.jar"/>
-            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.jface_3.8.0.v20120521-2329.jar"/>
-            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.osgi_3.8.0.v20120529-1548.jar"/>
-            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.ui.workbench_3.103.0.v20120530-1824.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.jface_3.8.101.v20121026-132746.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.osgi_3.8.1.v20120830-144521.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.ui.workbench_3.104.0.v20121219-151754.jar"/>
             <fileset dir="../geoscrape/bin">
             	  <patternset id="non.test.binaries">
             	    <exclude name="**/*Test*"/>
@@ -32,31 +31,31 @@
     	<!-- create the various distributions by adding the relevant swt.jar file -->
     	<!-- 32-bit Windows -->
     	<copy file="build/pqlibre.jar" tofile="build/pqlibre${build.version}-win32.jar" overwrite="true"/>
-    	<unzip src="libs/swt-4.2-win32-win32-x86.zip" dest="libs/tmp/"/>
+    	<unzip src="libs/swt-4.2.1-win32-win32-x86.zip" dest="libs/tmp/"/>
     	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre${build.version}-win32.jar"/>
     	<delete dir="libs/tmp/"/>
     	
     	<!-- 64-bit Windows-->
     	<copy file="build/pqlibre.jar" tofile="build/pqlibre${build.version}-win64.jar" overwrite="true"/>
-    	<unzip src="libs/swt-4.2-win32-win32-x86_64.zip" dest="libs/tmp/"/>
+    	<unzip src="libs/swt-4.2.1-win32-win32-x86_64.zip" dest="libs/tmp/"/>
     	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre${build.version}-win64.jar"/>
     	<delete dir="libs/tmp/"/>
     	
     	<!-- 32-bit Linux -->
     	<copy file="build/pqlibre.jar" tofile="build/pqlibre${build.version}-linux32.jar" overwrite="true"/>
-    	<unzip src="libs/swt-4.2-gtk-linux-x86.zip" dest="libs/tmp/"/>
+    	<unzip src="libs/swt-4.2.1-gtk-linux-x86.zip" dest="libs/tmp/"/>
     	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre${build.version}-linux32.jar"/>
     	<delete dir="libs/tmp/"/>
     	
     	<!-- 64-bit Linux -->
     	<copy file="build/pqlibre.jar" tofile="build/pqlibre${build.version}-linux64.jar" overwrite="true"/>
-    	<unzip src="libs/swt-4.2-gtk-linux-x86_64.zip" dest="libs/tmp/"/>
+    	<unzip src="libs/swt-4.2.1-gtk-linux-x86_64.zip" dest="libs/tmp/"/>
     	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre${build.version}-linux64.jar"/>
     	<delete dir="libs/tmp/"/>
     	
     	<!-- PowerPC Linux -->
     	<copy file="build/pqlibre.jar" tofile="build/pqlibre${build.version}-linuxppc.jar" overwrite="true"/>
-    	<unzip src="libs/swt-4.2-gtk-linux-ppc64.zip" dest="libs/tmp/"/>
+    	<unzip src="libs/swt-4.2.1-gtk-linux-ppc64.zip" dest="libs/tmp/"/>
     	<zip basedir="libs/tmp/" includes="swt.jar" update="true" destfile="build/pqlibre${build.version}-linuxppc.jar"/>
     	<delete dir="libs/tmp/"/>
     </target>
