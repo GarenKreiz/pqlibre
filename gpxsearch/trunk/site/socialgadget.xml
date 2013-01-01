@@ -1,49 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<Module><ModulePrefs title="Steegle.com - Google Sites Twitter Follow Button" width="300" height="20" scrolling="false" title_url="http://www.steegle.com/websites/google-sites-howtos/twitter-follow-button-gadget" description="Twitter Follow button for Google Sites - follow the instructions on my site Steegle.com" author="Stephen Hind" author_email="stephen@steegle.com" author_affiliation="Steegle.com" author_location="Carlisle, Cumbria, UK" screenshot="http://www.steegle.com/images/twitter-follow-logo.jpg" author_link="http://www.steegle.com/" thumbnail="http://www.steegle.com/images/twitter-follow-logo.jpg" directory_title="Steegle.com - Twitter Follow Button">
-  </ModulePrefs><UserPref name="screenname" display_name="Twitter screen name:" datatype="string" required="true"/><UserPref name="dataShowCount" display_name="Followers count display:" datatype="bool" default_value="true"/><UserPref name="dataButton" display_name="Button colour:" datatype="enum" default_value="blue"><EnumValue value="blue" display_value="Blue (default)"/><EnumValue value="grey" display_value="Grey (works better on dark backgrounds)"/></UserPref><UserPref name="dataTextColor" display_name="Text colour (HEX colour code):" datatype="string" default_value=""/><UserPref name="dataLinkColor" display_name="Link colour (HEX colour code):" datatype="string" default_value=""/><UserPref name="dataLang" display_name="Language:" datatype="enum" default_value="en"><EnumValue value="en" selected="selected" display_value="English"/><EnumValue value="fr" display_value="French"/><EnumValue value="de" display_value="German"/><EnumValue value="it" display_value="Italian"/><EnumValue value="ja" display_value="Japanese"/><EnumValue value="ko" display_value="Korean"/><EnumValue value="es" display_value="Spanish"/></UserPref><Content type="html">
-<html><head><title>Steegle.com - Twitter Follow Button</title></head><body style="background-color:transparent;">      
-<div id="google_sites_twitter_follow_button" style="background-color:transparent;"><img src="http://www.google.com/ig/images/spinner.gif"></div>
-      <script type="text/javascript"> 
-          function stripat(twittername){
-            if (twittername.charAt(0)=='@'){
-              twittername = twittername.slice(1);
-              return twittername;
-            }else{
-              return twittername;
-            }
-          }          
-          // Get userprefs
-          var prefs = new gadgets.Prefs();
-          var screenname = prefs.getString("screenname");
-          var dataShowCount = prefs.getString("dataShowCount");
-          var dataButton = prefs.getString("dataButton");
-          var dataTextColor = prefs.getString("dataTextColor");
-          var dataLinkColor = prefs.getString("dataLinkColor");
-          var dataLang = prefs.getString("dataLang");
-          var height = 20;
-          var width = 300;
-          var iframeURL = 'http://platform.twitter.com/widgets/follow_button.html?screen_name='+stripat(screenname)+'&button='+dataButton+'&text_color='+dataTextColor+'&link_color='+dataLinkColor+'&lang='+dataLang+'&show_count='+dataShowCount;
-          if(gadgets.window){
-            var viewport = gadgets.window.getViewportDimensions();
-            if(viewport.width){
-            var width = viewport.width;
-              }
-              if(viewport.height){
-                var height = viewport.height;
-              }
-          } 
-          var iframe = document.createElement('iframe');
-          iframe.setAttribute('width',width+'px');
-          iframe.setAttribute('height',height+'px');
-          // TODO: add options to control frameborder
-          iframe.setAttribute('frameBorder','no');
-          iframe.setAttribute('src',iframeURL);
-          iframe.setAttribute('allowtransparency','true');
-          iframe.setAttribute('scrolling','no');
-          // set the follow button to the placeholder div
-          var dest = document.getElementById('google_sites_twitter_follow_button');
-          dest.innerHTML = '';
-          dest.appendChild(iframe);    
-    </script>
-</body></html>
-  </Content></Module>
+<Module>
+  <ModulePrefs title="social button gadget" />
+  <Content type="html">
+<html>
+<head>
+</head>
+<body>
+  Follow:<br/>
+    Share:<br/>
+      <a href="https://twitter.com/share" class="twitter-share-button" data-count="none" data-hashtags="geocaching">Tweet</a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+</body>
+</html>
+  </Content>
+</Module>
