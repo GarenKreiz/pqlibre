@@ -15,13 +15,26 @@ This page will tell you how to get started.
   # That's it.
 
 = Usage =
+== Finding Caches ==
   # Go to the folder where you saved the downloaded file, and double-click on it.
   # This should open the login dialog. 
   # Enter your geocaching.com username and password, then press "Login".
   # After a few seconds the main dialog will open, here you can specify your search parameters.  
   # Press "Search" and wait.
+  # When the search is complete you can see how many caches were found.
+  # You can choose to display the found caches on a map, save them as a .gpx file, or open them all in browser tabs.
+  # Done!
+== Getting your found caches ==
+  # Go to the folder where you saved the downloaded file, and double-click on it.
+  # This should open the login dialog. 
+  # Enter your geocaching.com username and password, then press "Login".
+  # After a few seconds the main dialog will open.
+  # Select the "My Finds" tab.
+  # Press "Search" and wait.
   # When the search is complete you select where you want to save your .gpx file.
   # Done!
+  If you want to, you can get someone else's found caches as well. Just enter their geocaching name in the name field, then press search. 
+
 
 = Troubleshooting =
   * Q: When I double-click the file I don't get a login dialog, I get a list of files.
