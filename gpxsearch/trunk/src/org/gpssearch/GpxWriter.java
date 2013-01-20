@@ -168,7 +168,7 @@ public class GpxWriter implements IRunnableWithProgress
 			putElement(hd, "desc", desc);
 			putElement(hd, "url", "http://www.geocaching.com/seek/cache_details.aspx?guid=" + c.getGuid());
 			putElement(hd, "urlname", c.getName());
-			if (c.isFound())
+			if (c.isFoundByUser())
 			{
 				putElement(hd, "sym", "Geocache Found");
 			}

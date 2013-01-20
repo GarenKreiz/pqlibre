@@ -188,7 +188,7 @@ public class MainDialog extends Dialog
 	protected void configureShell(Shell shell)
 	{
 		super.configureShell(shell);
-		shell.setText("PQLibre 0.5 (alpha)");
+		shell.setText("PQLibre 0.6 (alpha)");
 		shell.setImages(getParentShell().getImages());
 	}
 
@@ -621,10 +621,10 @@ public class MainDialog extends Dialog
 		btnIgnoreOwn.setText("Ignore own");
 
 		btnIgnoreFound = new Button(searchComposite, SWT.CHECK);
-		btnIgnoreFound.setBounds(123, 417, 107, 26);
+		btnIgnoreFound.setBounds(123, 417, 126, 26);
 		btnIgnoreFound.setToolTipText("Ignore caches you have already found");
 		btnIgnoreFound.setSelection(true);
-		btnIgnoreFound.setText("Ignore found");
+		btnIgnoreFound.setText("Ignore my finds");
 
 		btnIgnoreDisabled = new Button(searchComposite, SWT.CHECK);
 		btnIgnoreDisabled.setToolTipText("Ignore caches that have been disabled");
@@ -1096,7 +1096,11 @@ public class MainDialog extends Dialog
 			int y = getShell().getBounds().y;
 			y += locationInput.getBounds().y + locationInput.getBounds().height * 1.5;
 
-			tip.setMessage("Location must be same format as on GC.com website,\nfor example \"N 46 28.222 W 063 30.956\". The degree symbol is optional.");
+			tip.setMessage("Location must be in one of the following formats:\n" +
+					"MinDec (e.g. \"N 46° 28.222' W 063° 30.956'\")\n" +
+					"DegDec (e.g. \"46.47037 -63.51593\")\n" +
+					"DMS (e.g. \"N 46° 28' 13.332\" W 63° 30' 57.348\"\")\n" +
+					"The degree, minute, and second symbols are optional.");
 			tip.setLocation(x, y);
 
 			tip.setVisible(true);

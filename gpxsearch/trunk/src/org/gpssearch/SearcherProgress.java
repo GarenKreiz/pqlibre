@@ -40,6 +40,7 @@ public class SearcherProgress extends Progress
 	private boolean checkTrackables;
 	private boolean checkDisabled;
 	private boolean ignoreOwn;
+	private boolean ignoreFound;
 	private boolean checkDT;
 	private List<String> acceptedDTCombos = new ArrayList<String>();
 	private boolean checkSize;
@@ -118,6 +119,7 @@ public class SearcherProgress extends Progress
 		checkTrackables = Boolean.parseBoolean(properties.getProperty("btnHasTrackable", "false"));
 		checkDisabled = Boolean.parseBoolean(properties.getProperty("btnIgnoreDisabled", "false"));
 		ignoreOwn = Boolean.parseBoolean(properties.getProperty("btnIgnoreOwn", "false"));
+		ignoreFound = Boolean.parseBoolean(properties.getProperty("btnIgnoreFound", "false"));
 		checkDT = Boolean.parseBoolean(properties.getProperty("btnFilterDifficultyterrain", "false"));
 		if (checkDT)
 		{
@@ -354,6 +356,11 @@ public class SearcherProgress extends Progress
 		{
 			return false;
 		}
+		// - found by us or not
+		if (ignoreFound && cache.isFoundByUser())
+		{
+			return false;
+		}
 		// - last find date or not found at all
 		if (notFound && cache.getLastFoundDate() != null)
 		{
@@ -452,10 +459,10 @@ public class SearcherProgress extends Progress
 			radius *= 1.609344;
 		}
 		// check if we ignore our own caches
-		boolean ignoreFound = Boolean.parseBoolean(properties.getProperty("btnIgnoreFound"));
+		boolean ignoreFoundAndOwn = ignoreFound & ignoreOwn;
 		try
 		{
-			searcher.findCachesCloseTo(loc, radius, ignoreFound);
+			searcher.findCachesCloseTo(loc, radius, ignoreFoundAndOwn);
 		}
 		catch (IOException e)
 		{

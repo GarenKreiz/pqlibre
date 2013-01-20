@@ -187,7 +187,7 @@ public class MapGenerator implements IRunnableWithProgress
 	private String getId(Cache c)
 	{
 		String res = "";
-		if (c.isFound())
+		if (c.isFoundByUser())
 		{
 			res = "found";
 		}
