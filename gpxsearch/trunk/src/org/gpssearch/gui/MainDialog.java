@@ -690,14 +690,14 @@ public class MainDialog extends Dialog
 		Composite myfindsComposite = new Composite(tabFolder, SWT.NONE);
 		myfindsComposite.setBounds(10, 10, 622, 642);
 		tabMyfinds.setControl(myfindsComposite);
+		
+				lblWhoseCacheFinds = new Label(myfindsComposite, SWT.NONE);
+				lblWhoseCacheFinds.setBounds(10, 10, 326, 15);
+				lblWhoseCacheFinds.setText("Whose cache finds to download: ");
 
-		Composite compositeWhose = new Composite(myfindsComposite, SWT.NONE);
+		Composite compositeWhose = new Composite(myfindsComposite, SWT.BORDER);
 		compositeWhose.setEnabled(true);
 		compositeWhose.setBounds(10, 31, 337, 84);
-
-		lblWhoseCacheFinds = new Label(myfindsComposite, SWT.NONE);
-		lblWhoseCacheFinds.setBounds(10, 10, 326, 15);
-		lblWhoseCacheFinds.setText("Whose cache finds to download: ");
 
 		btnMine = new Button(compositeWhose, SWT.RADIO);
 		btnMine.setEnabled(true);
@@ -734,7 +734,7 @@ public class MainDialog extends Dialog
 		lblHowManyCaches.setBounds(10, 120, 257, 15);
 		lblHowManyCaches.setText("How many caches to download:");
 
-		Composite compositeHowmany = new Composite(myfindsComposite, SWT.NONE);
+		Composite compositeHowmany = new Composite(myfindsComposite, SWT.BORDER);
 		compositeHowmany.setEnabled(true);
 		compositeHowmany.setBounds(10, 141, 337, 121);
 
