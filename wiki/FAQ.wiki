@@ -15,7 +15,7 @@
    __*A*: PQ Libre has been optimised to use as little bandwidth as possible.
 
   __*Q*: How can I speed up my searches?     
-   __*A*: Filter on type, number of favourite points, placed date, keyword, contains trackable, and days since last find or not found at all. Ignore own, found, and disabled. Also filter on "Needs Maintenance" attribute. The more of these search criteria you have, the more caches can be rejected before downloading the full description. Filtering on size, difficulty, and terrain also helps to a lesser degree. Reducing the search radius and/or limiting the number of caches returned will also help return your result faster. Deselecting the "include full logs" checkbox will speed up the retrieval of individual caches that match your criteria. 
+   __*A*: Filter on type, number of favourite points, placed date, keyword, contains trackable, and days since last find or not found at all. Ignore own, found, and disabled. Also filter on "Needs Maintenance" attribute. The more of these search criteria you have, the more caches can be rejected before downloading the full description. Filtering on size, difficulty, and terrain also helps to a lesser degree. Reducing the search radius and/or limiting the number of caches returned will also help return your result faster. Deselecting the "include full logs" checkbox will speed up the retrieval of individual caches that match your criteria. Check the "ignore own" box even if you have not placed any caches. 
 
   __*Q*: I have a great idea for a feature you should include!
    __*A*: Great! Drop us an email or create a feature request using the "Issues" tab. Describe your idea in as much detail as possible. Feel free to send us an image if you think that helps.
