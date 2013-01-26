@@ -188,7 +188,7 @@ public class MainDialog extends Dialog
 	protected void configureShell(Shell shell)
 	{
 		super.configureShell(shell);
-		shell.setText("PQLibre 0.6 (alpha)");
+		shell.setText("PQLibre 0.6 (beta)");
 		shell.setImages(getParentShell().getImages());
 	}
 
