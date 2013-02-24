@@ -17,6 +17,7 @@
             <fileset dir="bin"/>
             <fileset dir="." includes="icon*.png"/>
             <fileset dir="." includes="diftersiz.db"/>
+            <fileset dir="." includes="res/attribute_*.png"/>
             <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.core.commands_3.6.1.v20120814-150512.jar"/>
             <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.equinox.common_3.6.100.v20120522-1841.jar"/>
             <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.jface_3.8.101.v20121026-132746.jar"/>
