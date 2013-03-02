@@ -1,20 +1,30 @@
 package org.gpssearch.gui;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+import javax.imageio.ImageIO;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -78,7 +88,7 @@ public class AttributeDialog extends Dialog
 	private void createContents()
 	{
 		shlAttributes = new Shell(getParent(), getStyle());
-		shlAttributes.setSize(481, 767);
+		shlAttributes.setSize(495, 767);
 		shlAttributes.setText("Attributes");
 		shlAttributes.setLayout(new FormLayout());
 
@@ -120,17 +130,18 @@ public class AttributeDialog extends Dialog
 		ScrolledComposite scrolledComposite = new ScrolledComposite(shlAttributes, SWT.BORDER | SWT.V_SCROLL);
 		scrolledComposite.setAlwaysShowScrollBars(true);
 		FormData fd_scrolledComposite = new FormData();
+		fd_scrolledComposite.right = new FormAttachment(btnCancel, 0, SWT.RIGHT);
 		fd_scrolledComposite.bottom = new FormAttachment(btnOk, -6);
 		fd_scrolledComposite.top = new FormAttachment(0, 10);
-		fd_scrolledComposite.right = new FormAttachment(0, 439);
-		fd_scrolledComposite.left = new FormAttachment(0, 37);
+		fd_scrolledComposite.left = new FormAttachment(0, 10);
 		scrolledComposite.setLayoutData(fd_scrolledComposite);
 		scrolledComposite.setExpandHorizontal(true);
 		scrolledComposite.setExpandVertical(true);
 
 		Composite composite_2 = new Composite(scrolledComposite, SWT.NONE);
-		composite_2.setLayout(new GridLayout(2, false));
+		composite_2.setLayout(new GridLayout(3, false));
 
+		Label dummyLabel = new Label(composite_2, SWT.NONE);
 		Label lblNewLabel = new Label(composite_2, SWT.NONE);
 		lblNewLabel.setText("Attribute                            ");
 		GuiTools.applyDefaultFontSize(lblNewLabel);
@@ -155,10 +166,55 @@ public class AttributeDialog extends Dialog
 		lblIgnore.setText("Ignore");
 		GuiTools.applyDefaultFontSize(lblIgnore);
 
+		//load the red bar
+		String redbarName = "attribute__strikethru.png";
+
+		InputStream redbarInput  = getClass().getResourceAsStream("/res/"+redbarName);
+		if (redbarInput == null)
+		{
+			try
+			{
+				redbarInput = new FileInputStream("res"+File.separator+redbarName);
+			}
+			catch (FileNotFoundException e1)
+			{
+				//TODO: Notify the user
+				e1.printStackTrace();
+			}
+		}
+		Image redBar = new Image(getParent().getDisplay(),redbarInput);
+		
+
 		// add all attributes
 		for (Attribute a : Attribute.values())
 		{
 			attributes.add(a);
+			
+			Label imgLbl = new Label(composite_2,SWT.NONE);
+			String imageName = AttributeImageMap.getAttributFileName(a)+".png";
+			InputStream input  = getClass().getResourceAsStream("/res/"+imageName);
+
+			if (input == null)
+			{
+				try
+				{
+					input = new FileInputStream("res"+File.separator+imageName);
+				}
+				catch (FileNotFoundException e1)
+				{
+					//TODO: Notify the user
+					e1.printStackTrace();
+				}
+			}
+			Image image = new Image(getParent().getDisplay(), input);
+			if(a.getInc()==0)
+			{
+				//draw a red bar across the image
+				GC gc = new GC(image);
+				gc.drawImage(redBar, 0, 0);
+			}
+			imgLbl.setImage(image);
+			
 			Label lblFoo = new Label(composite_2, SWT.NONE);
 			lblFoo.setText(a.toString());
 			GuiTools.applyDefaultFontSize(lblFoo);

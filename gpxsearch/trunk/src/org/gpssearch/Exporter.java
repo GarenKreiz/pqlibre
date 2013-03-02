@@ -21,8 +21,8 @@ import org.gpssearch.gui.LoginFailedDialog;
 import org.gpssearch.gui.MainDialog;
 
 /**
- * Program entry point class.
- * This class is responsible for opening dialog, saving authentication settings.
+ * Program entry point class. This class is responsible for opening dialog,
+ * saving authentication settings.
  * 
  */
 public class Exporter
@@ -30,7 +30,7 @@ public class Exporter
 
 	public static final String DT_COMBO_STRING = "^[1-5](\\.5)?/[1-5](\\.5)?$";
 	private static final String SETTINGS_FILENAME = ".gpxexporter.settings";
-	
+
 	private Login login = null;
 	private boolean loggedin = false;
 
@@ -57,7 +57,7 @@ public class Exporter
 					{
 						is = new FileInputStream(imageNames[i]);
 					}
-					images[i]=new Image(display, is);
+					images[i] = new Image(display, is);
 				}
 				shell.setImages(images);
 			}
@@ -65,6 +65,7 @@ public class Exporter
 			{
 				e.printStackTrace();
 			}
+			// TODO: Start a thread to pre-configure dialogs and load data
 			while (!loggedin)
 			{
 				LoginDialog dialog = new LoginDialog(shell);
@@ -73,6 +74,7 @@ public class Exporter
 				dialog.setRemember(loadSaveCredentials());
 
 				dialog.open();
+
 				if (dialog.isSaveCredentials())
 				{
 					saveCredentials(dialog.getUsername(), dialog.getPassword());
@@ -101,7 +103,7 @@ public class Exporter
 									// force update of the date format
 									login.getDateFormat();
 									loggedin = true;
-									
+
 								}
 								monitor.done();
 							}
@@ -279,8 +281,6 @@ public class Exporter
 		return res;
 	}
 
-
-	
 	/**
 	 * Launch the application.
 	 */
