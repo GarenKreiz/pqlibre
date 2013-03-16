@@ -20,7 +20,6 @@ import org.geoscrape.Login;
 public class MyCachesProgress extends Progress
 {
 	private String targetUser;
-	private int maxFinds;
 	private long lowestFindTime;
 
 	/**
@@ -44,7 +43,7 @@ public class MyCachesProgress extends Progress
 		if (Boolean.parseBoolean(properties.getProperty("btnLast")))
 		{
 			// only the last caches
-			maxFinds = Integer.parseInt(properties.getProperty("cacheCount"));
+			maxFind = Integer.parseInt(properties.getProperty("cacheCount"));
 		}
 		else if (Boolean.parseBoolean(properties.getProperty("btnFoundAfter")))
 		{
@@ -153,7 +152,7 @@ public class MyCachesProgress extends Progress
 		monitor.beginTask("Preparing search...", 100);
 		try
 		{
-			searcher.findCachesFoundBy(new Cacher(this.targetUser), this.maxFinds);
+			searcher.findCachesFoundBy(new Cacher(this.targetUser), this.maxFind);
 		}
 		catch (IOException e)
 		{

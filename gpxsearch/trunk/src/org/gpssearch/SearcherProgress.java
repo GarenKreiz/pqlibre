@@ -296,10 +296,6 @@ public class SearcherProgress extends Progress
 			}
 		}
 
-		if (maxFind > 0 && caches.size() >= maxFind)
-		{
-			searcher.abort();
-		}
 		try
 		{
 			if (includeLogs)
@@ -325,6 +321,12 @@ public class SearcherProgress extends Progress
 	 */
 	protected boolean checkPreDownload(Cache cache)
 	{
+
+		if (maxFind > 0 && caches.size() >= maxFind)
+		{
+			searcher.abort();
+			return false;
+		}
 		// check things that can be checked before complete cache download:
 		// - number of favourite points
 		if (checkFavouritePoints && cache.getFavourited() < minFavPoints)

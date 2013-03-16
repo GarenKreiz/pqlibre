@@ -139,11 +139,10 @@ public class AttributeDialog extends Dialog
 		scrolledComposite.setExpandVertical(true);
 
 		Composite composite_2 = new Composite(scrolledComposite, SWT.NONE);
-		composite_2.setLayout(new GridLayout(2, false));
-/*
+
 		composite_2.setLayout(new GridLayout(3, false));
 		
-		Label dummyLabel = new Label(composite_2, SWT.NONE);*/
+		Label dummyLabel = new Label(composite_2, SWT.NONE);
 		Label lblNewLabel = new Label(composite_2, SWT.NONE);
 		lblNewLabel.setText("Attribute                            ");
 		GuiTools.applyDefaultFontSize(lblNewLabel);
@@ -192,7 +191,7 @@ public class AttributeDialog extends Dialog
 		{
 			attributes.add(a);
 			
-			/*Label imgLbl = new Label(composite_2,SWT.NONE);
+			Label imgLbl = new Label(composite_2,SWT.NONE);
 			String imageName = AttributeImageMap.getAttributFileName(a)+".png";
 			InputStream input  = getClass().getResourceAsStream("/res/"+imageName);
 
@@ -215,7 +214,7 @@ public class AttributeDialog extends Dialog
 				GC gc = new GC(image);
 				gc.drawImage(redBar, 0, 0);
 			}
-			imgLbl.setImage(image);*/
+			imgLbl.setImage(image);
 			
 			Label lblFoo = new Label(composite_2, SWT.NONE);
 			lblFoo.setText(a.toString());
