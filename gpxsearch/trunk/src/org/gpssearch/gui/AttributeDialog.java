@@ -9,22 +9,18 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
-import javax.imageio.ImageIO;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
@@ -142,7 +138,7 @@ public class AttributeDialog extends Dialog
 
 		composite_2.setLayout(new GridLayout(3, false));
 		
-		Label dummyLabel = new Label(composite_2, SWT.NONE);
+		new Label(composite_2, SWT.NONE);
 		Label lblNewLabel = new Label(composite_2, SWT.NONE);
 		lblNewLabel.setText("Attribute                            ");
 		GuiTools.applyDefaultFontSize(lblNewLabel);
