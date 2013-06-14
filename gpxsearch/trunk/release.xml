@@ -11,18 +11,17 @@
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
                 <attribute name="Rsrc-Main-Class" value="org.gpssearch.Exporter"/>
                 <attribute name="Class-Path" value="."/>
-            	<attribute name="Rsrc-Class-Path" value="./ swt.jar org.eclipse.core.commands_3.6.1.v20120814-150512.jar org.eclipse.equinox.common_3.6.100.v20120522-1841.jar org.eclipse.jface_3.8.101.v20121026-132746.jar org.eclipse.osgi_3.8.1.v20120830-144521.jar org.eclipse.ui.workbench_3.104.0.v20121219-151754.jar"/>
-            	            </manifest>
+            	<attribute name="Rsrc-Class-Path" value="./ swt.jar org.eclipse.equinox.common_3.6.100.v20120522-1841.jar org.eclipse.core.commands_3.6.2.v20130123-162658.jar org.eclipse.ui.workbench_3.104.0.v20130204-164612.jar org.eclipse.osgi_3.8.2.v20130124-134944.jar org.eclipse.jface_3.8.102.v20130123-162658.jar"/>
+            </manifest>
             <zipfileset src="jar-in-jar-loader.zip"/>
             <fileset dir="bin"/>
             <fileset dir="." includes="icon*.png"/>
-            <fileset dir="." includes="diftersiz.db"/>
             <fileset dir="." includes="res/attribute_*.png"/>
-            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.core.commands_3.6.1.v20120814-150512.jar"/>
             <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.equinox.common_3.6.100.v20120522-1841.jar"/>
-            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.jface_3.8.101.v20121026-132746.jar"/>
-            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.osgi_3.8.1.v20120830-144521.jar"/>
-            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.ui.workbench_3.104.0.v20121219-151754.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.core.commands_3.6.2.v20130123-162658.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.ui.workbench_3.104.0.v20130204-164612.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.osgi_3.8.2.v20130124-134944.jar"/>
+            <zipfileset dir="${env.ECLIPSE_HOME}/plugins" includes="org.eclipse.jface_3.8.102.v20130123-162658.jar"/>
             <fileset dir="../geoscrape/bin">
             	  <patternset id="non.test.binaries">
             	    <exclude name="**/*Test*"/>

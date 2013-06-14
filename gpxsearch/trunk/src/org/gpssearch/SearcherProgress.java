@@ -411,11 +411,6 @@ public class SearcherProgress extends Progress
 				}
 			}
 		}
-		// only populate the Difficulty/Terrain/Size image if we have to
-		if (checkDT || checkSize)
-		{
-			searcher.populateDTfromImage(cache);
-		}
 		// - D/T
 		if (checkDT)
 		{

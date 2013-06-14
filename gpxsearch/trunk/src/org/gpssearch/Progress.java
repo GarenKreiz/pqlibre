@@ -39,7 +39,6 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 	public Progress(ListSearcher search, Login login, UserIdManager man, Properties props)
 	{
 		this.searcher = search;
-		this.searcher.setDelayDiffTerrSizeParsing(true);
 		this.login = login;
 		this.idManager = man;
 		this.searcher.registerSearchCallback(this);

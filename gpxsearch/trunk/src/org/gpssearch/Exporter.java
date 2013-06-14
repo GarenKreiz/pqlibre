@@ -65,7 +65,7 @@ public class Exporter
 			{
 				e.printStackTrace();
 			}
-			// TODO: Start a thread to pre-configure dialogs and load data
+			//TODO: Load attribute images in separate thread while logging in
 			while (!loggedin)
 			{
 				LoginDialog dialog = new LoginDialog(shell);
@@ -136,6 +136,7 @@ public class Exporter
 			e.printStackTrace();
 		}
 	}
+	
 
 	/**
 	 * 

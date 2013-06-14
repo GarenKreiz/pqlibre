@@ -31,25 +31,25 @@ public class MyHidesProgress extends Progress
 		super(search, login, man, props);
 		// check if we're doing a search for my caches or the caches of another
 		// user
-		if (Boolean.parseBoolean(properties.getProperty("btnHidesMine")))
+		if (Boolean.parseBoolean(properties.getProperty("btnMineHides")))
 		{
 			this.targetUser = login.getUserName();
 		}
 		else
 		{
-			this.targetUser = properties.getProperty("textHidesOtherUsername");
+			this.targetUser = properties.getProperty("textOtherUsernameHides");
 		}
-		if (Boolean.parseBoolean(properties.getProperty("btnHidesLast")))
+		if (Boolean.parseBoolean(properties.getProperty("btnLastHides")))
 		{
 			// only the last caches
-			maxFind = Integer.parseInt(properties.getProperty("cacheHidesCount"));
+			maxFind = Integer.parseInt(properties.getProperty("cacheCountHides"));
 		}
-		else if (Boolean.parseBoolean(properties.getProperty("btnHidesFoundAfter")))
+		else if (Boolean.parseBoolean(properties.getProperty("btnFoundAfterHides")))
 		{
 			try
 			{
 				SimpleDateFormat df = new SimpleDateFormat(login.getDateFormat());
-				lowestFindTime = df.parse(properties.getProperty("textHidesFoundSince")).getTime();
+				lowestFindTime = df.parse(properties.getProperty("textFoundSinceHides")).getTime();
 			}
 			catch (ParseException e)
 			{
@@ -57,7 +57,7 @@ public class MyHidesProgress extends Progress
 				e.printStackTrace();
 			}
 		}
-		fullLogs = Boolean.parseBoolean(properties.getProperty("btnHidesFullLogs","false"));
+		fullLogs = Boolean.parseBoolean(properties.getProperty("btnFullLogHides","false"));
 	}
 
 	/**
@@ -99,8 +99,7 @@ public class MyHidesProgress extends Progress
 		{
 			if(cache.getLastFoundDate()<=lowestFindTime)
 			{
-				//cache hasn't been found since before lowestFindTime, ignore rest of search
-				monitor.setCanceled(true);
+				//cache hasn't been found since before lowestFindTime
 				return false;
 			}
 		}

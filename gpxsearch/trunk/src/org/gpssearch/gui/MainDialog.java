@@ -46,6 +46,7 @@ import org.geoscrape.ListSearcher;
 import org.geoscrape.Location;
 import org.geoscrape.Login;
 import org.gpssearch.MyCachesProgress;
+import org.gpssearch.MyHidesProgress;
 import org.gpssearch.Progress;
 import org.gpssearch.SearcherProgress;
 import org.gpssearch.UserIdManager;
@@ -116,7 +117,17 @@ public class MainDialog extends Dialog
 	private Button btnIncludeLogs;
 	private Button btnMatchKeyword;
 	private Button btnFilterDifficultyterrain;
-
+	private Label lblWhoseCacheHides;
+	private Button btnMineHides;
+	private Button btnUserHides;
+	private Text textOtherUsernameHides;
+	private Label lblHowManyCachesHides;
+	private Button btnAllHides;
+	private Spinner cacheCountHides;
+	private Button btnLastHides;
+	private Button btnFoundAfterHides;
+	private Text textFoundSinceHides;
+	
 	private Group sizeGroup;
 	private Group typeGroup;
 
@@ -132,6 +143,7 @@ public class MainDialog extends Dialog
 
 	private TabItem tabSearch;
 	private TabItem tabMyfinds;
+	private TabItem tabMyhides;
 
 	private Label lblMaximumResults;
 	private Label lblFavouritePoints;
@@ -144,6 +156,10 @@ public class MainDialog extends Dialog
 	protected HashMap<Text, Button> belongButtonsUnselect;
 	protected HashMap<Text, Button> belongButtonsSelect;
 
+	private Button btnFullLogHides;
+
+
+
 	/**
 	 * Create the dialog.
 	 * 
@@ -152,7 +168,7 @@ public class MainDialog extends Dialog
 	public MainDialog(Shell parentShell, Login login)
 	{
 		super(parentShell);
-		setShellStyle(SWT.CLOSE | SWT.MIN | SWT.TITLE | SWT.APPLICATION_MODAL);
+		setShellStyle(SWT.CLOSE | SWT.MIN | SWT.RESIZE | SWT.TITLE | SWT.APPLICATION_MODAL);
 		this.login = login;
 		this.dateFormat = login.getDateFormat();
 		properties = new Properties();
@@ -211,6 +227,8 @@ public class MainDialog extends Dialog
 		setUpSearch();
 
 		setUpMyfinds();
+		
+		setUpMyhides();
 
 		setAllFontSizes();
 
@@ -679,6 +697,134 @@ public class MainDialog extends Dialog
 		btnIncludeLogs.setBounds(10, 545, 220, 26);
 		btnIncludeLogs.setText("Include full logs in output");
 	}
+	
+	private void setUpMyhides()
+	{
+		tabMyhides = new TabItem(tabFolder, SWT.NONE);
+		tabMyhides.setText("My hides");
+		Composite myhidesComposite = new Composite(tabFolder, SWT.NONE);
+		myhidesComposite.setBounds(10, 10, 622, 642);
+		tabMyhides.setControl(myhidesComposite);
+
+		lblWhoseCacheHides = new Label(myhidesComposite, SWT.NONE);
+		lblWhoseCacheHides.setBounds(10, 10, 326, 15);
+		lblWhoseCacheHides.setText("Whose cache hides to download: ");
+
+		Composite compositeWhose = new Composite(myhidesComposite, SWT.BORDER);
+		compositeWhose.setEnabled(true);
+		compositeWhose.setBounds(10, 31, 337, 84);
+
+		btnMineHides = new Button(compositeWhose, SWT.RADIO);
+		btnMineHides.setEnabled(true);
+		btnMineHides.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				checkMyhidesButtons();
+			}
+		});
+		btnMineHides.setBounds(10, 10, 103, 26);
+		btnMineHides.setSelection(true);
+		btnMineHides.setText("mine");
+
+		btnUserHides = new Button(compositeWhose, SWT.RADIO);
+		btnUserHides.setEnabled(true);
+		btnUserHides.setBounds(10, 42, 59, 26);
+		btnUserHides.setText("user: ");
+		btnUserHides.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				checkMyhidesButtons();
+			}
+		});
+
+		textOtherUsernameHides = new Text(compositeWhose, SWT.BORDER);
+		textOtherUsernameHides.setBounds(74, 47, 183, 21);
+		textOtherUsernameHides.setEnabled(true);
+
+		lblHowManyCachesHides = new Label(myhidesComposite, SWT.NONE);
+		lblHowManyCachesHides.setBounds(10, 120, 257, 15);
+		lblHowManyCachesHides.setText("How many caches to download:");
+
+		Composite compositeHowmany = new Composite(myhidesComposite, SWT.BORDER);
+		compositeHowmany.setEnabled(true);
+		compositeHowmany.setBounds(10, 141, 337, 121);
+
+		btnAllHides = new Button(compositeHowmany, SWT.RADIO);
+		btnAllHides.setEnabled(true);
+		btnAllHides.setBounds(10, 10, 103, 26);
+		btnAllHides.setSelection(true);
+		btnAllHides.setText("all");
+		btnAllHides.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				checkMyhidesButtons();
+			}
+		});
+
+		btnLastHides = new Button(compositeHowmany, SWT.RADIO);
+		btnLastHides.setEnabled(true);
+		btnLastHides.setBounds(10, 42, 49, 26);
+		btnLastHides.setText("last");
+		btnLastHides.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				checkMyhidesButtons();
+			}
+		});
+
+		cacheCountHides = new Spinner(compositeHowmany, SWT.BORDER);
+		cacheCountHides.setBounds(74, 42, 84, 21);
+		cacheCountHides.setMaximum(10000);
+		cacheCountHides.setMinimum(1);
+		cacheCountHides.setEnabled(false);
+
+		btnFoundAfterHides = new Button(compositeHowmany, SWT.RADIO);
+		btnFoundAfterHides.setEnabled(true);
+		btnFoundAfterHides.setBounds(10, 74, 118, 26);
+		btnFoundAfterHides.setText("all found since");
+		btnFoundAfterHides.addSelectionListener(new SelectionAdapter()
+		{
+			@Override
+			public void widgetSelected(SelectionEvent e)
+			{
+				checkMyhidesButtons();
+			}
+		});
+
+		textFoundSinceHides = new Text(compositeHowmany, SWT.BORDER);
+		textFoundSinceHides.setBounds(131, 79, 110, 21);
+		textFoundSinceHides.setEnabled(false);
+		textFoundSinceHides.setToolTipText("Use the same date format as you use on geocaching.com: " + this.dateFormat);
+		textFoundSinceHides.addFocusListener(new FocusAdapter()
+		{
+			@Override
+			public void focusLost(FocusEvent e)
+			{
+				if (btnFoundAfterHides.getSelection())
+				{
+					verifyDate(textFoundSinceHides);
+				}
+			}
+		});
+		
+
+		btnFullLogHides = new Button(myhidesComposite, SWT.CHECK);
+		btnFullLogHides.setBounds(10, 545, 220, 26);
+		btnFullLogHides.setText("Include full logs in output");
+		
+		
+		belongButtonsUnselect.put(textFoundSinceHides, btnFoundAfterHides);
+		belongButtonsSelect.put(textFoundSinceHides, btnAllHides);
+		
+	}
 
 	/**
 	 * 
@@ -690,10 +836,10 @@ public class MainDialog extends Dialog
 		Composite myfindsComposite = new Composite(tabFolder, SWT.NONE);
 		myfindsComposite.setBounds(10, 10, 622, 642);
 		tabMyfinds.setControl(myfindsComposite);
-		
-				lblWhoseCacheFinds = new Label(myfindsComposite, SWT.NONE);
-				lblWhoseCacheFinds.setBounds(10, 10, 326, 15);
-				lblWhoseCacheFinds.setText("Whose cache finds to download: ");
+
+		lblWhoseCacheFinds = new Label(myfindsComposite, SWT.NONE);
+		lblWhoseCacheFinds.setBounds(10, 10, 326, 15);
+		lblWhoseCacheFinds.setText("Whose cache finds to download: ");
 
 		Composite compositeWhose = new Composite(myfindsComposite, SWT.BORDER);
 		compositeWhose.setEnabled(true);
@@ -804,7 +950,7 @@ public class MainDialog extends Dialog
 	}
 
 	/**
-	 * Check that the correct fiels are enabled/disabled on the "my finds" page.
+	 * Check that the correct fields are enabled/disabled on the "my finds" page.
 	 */
 	protected void checkMyfindsButtons()
 	{
@@ -819,6 +965,24 @@ public class MainDialog extends Dialog
 		if (btnFoundAfter.getSelection() != textFoundSince.getEnabled())
 		{
 			textFoundSince.setEnabled(btnFoundAfter.getSelection());
+		}
+	}
+	/**
+	 * Check that the correct fields are enabled/disabled on the "my finds" page.
+	 */
+	protected void checkMyhidesButtons()
+	{
+		if (textOtherUsernameHides.getEnabled() != btnUserHides.getSelection())
+		{
+			textOtherUsernameHides.setEnabled(btnUserHides.getSelection());
+		}
+		if (btnLastHides.getSelection() != cacheCountHides.getEnabled())
+		{
+			cacheCountHides.setEnabled(btnLastHides.getSelection());
+		}
+		if (btnFoundAfterHides.getSelection() != textFoundSinceHides.getEnabled())
+		{
+			textFoundSinceHides.setEnabled(btnFoundAfterHides.getSelection());
 		}
 	}
 
@@ -1010,6 +1174,7 @@ public class MainDialog extends Dialog
 			foundInlastDaysField.setEnabled(btnFoundInLast.getSelection());
 		}
 		checkMyfindsButtons();
+		checkMyhidesButtons();
 	}
 
 	/**
@@ -1134,7 +1299,6 @@ public class MainDialog extends Dialog
 			{
 				try
 				{
-
 					// get the properties
 					copyProperties();
 
@@ -1153,13 +1317,22 @@ public class MainDialog extends Dialog
 							props.setProperty("btnPlacedBefore", "false");
 						}
 					}
-
 					else if (sel[0].equals(tabMyfinds))
 					{
 						if (!verifyDate(textFoundSince))
 						{
+							//invalid date, reset options
 							props.setProperty("btnAll", "true");
 							props.setProperty("btnFoundAfter", "false");
+						}
+					}
+					else if (sel[0].equals(tabMyhides))
+					{
+						if (!verifyDate(textFoundSinceHides))
+						{
+							//invalid date, reset options
+							props.setProperty("btnAllHides", "true");
+							props.setProperty("btnFoundAfterHides", "false");
 						}
 					}
 					// save the properties
@@ -1177,6 +1350,10 @@ public class MainDialog extends Dialog
 						else if (sel[0].equals(tabMyfinds))
 						{
 							progr = new MyCachesProgress(searcher, login, idManager, props);
+						}
+						else if(sel[0].equals(tabMyhides))
+						{
+							progr = new MyHidesProgress(searcher, login, idManager, props);
 						}
 						ProgressMonitorDialog progdialog = new ProgressMonitorDialog(getShell());
 						progdialog.run(true, true, progr);
