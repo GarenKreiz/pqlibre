@@ -126,7 +126,7 @@ public class Exporter
 			}
 			if (loggedin)
 			{
-				MainDialog md = new MainDialog(shell, login);
+				MainDialog md = new MainDialog(shell.getImages(), login);
 				md.open();
 			}
 

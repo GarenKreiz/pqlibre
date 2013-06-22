@@ -25,7 +25,7 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -158,6 +158,8 @@ public class MainDialog extends Dialog
 
 	private Button btnFullLogHides;
 
+	private Image[] images;
+
 
 
 	/**
@@ -165,9 +167,10 @@ public class MainDialog extends Dialog
 	 * 
 	 * @param parentShell
 	 */
-	public MainDialog(Shell parentShell, Login login)
+	public MainDialog(Image [] images, Login login)
 	{
-		super(parentShell);
+		super((Shell)null);
+		this.images = images;
 		setShellStyle(SWT.CLOSE | SWT.MIN | SWT.RESIZE | SWT.TITLE | SWT.APPLICATION_MODAL);
 		this.login = login;
 		this.dateFormat = login.getDateFormat();
@@ -204,8 +207,14 @@ public class MainDialog extends Dialog
 	protected void configureShell(Shell shell)
 	{
 		super.configureShell(shell);
-		shell.setText("PQLibre 0.7 (beta)");
-		shell.setImages(getParentShell().getImages());
+		shell.setText("PQLibre 0.7.1 (beta)");
+		shell.setImages(this.images);
+		int desiredWidth = 665;
+		int desiredHeight = 710;
+		int heightDiff = shell.getBounds().height-shell.getClientArea().height;
+		int widthDiff = shell.getBounds().width-shell.getClientArea().width;
+		shell.setSize(desiredWidth+widthDiff, desiredHeight+heightDiff);
+		shell.setLocation(200,200);
 	}
 
 	/**
@@ -287,7 +296,6 @@ public class MainDialog extends Dialog
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	/**
@@ -1380,14 +1388,5 @@ public class MainDialog extends Dialog
 		GuiTools.applyDefaultFontSize(btnSearch);
 		Button btnExit = createButton(parent, IDialogConstants.CANCEL_ID, "Exit", false);
 		GuiTools.applyDefaultFontSize(btnExit);
-	}
-
-	/**
-	 * Return the initial size of the dialog.
-	 */
-	@Override
-	protected Point getInitialSize()
-	{
-		return new Point(665, 735);
 	}
 }
