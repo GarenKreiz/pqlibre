@@ -7,11 +7,14 @@ import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.geoscrape.Cache;
 import org.geoscrape.CacheLog;
 import org.geoscrape.ListSearcher;
 import org.geoscrape.Login;
 import org.geoscrape.SearchCallback;
+import org.gpssearch.gui.ParsingErrorDialog;
 
 /**
  * Keep track of the search progress, display info to the user and filter
@@ -30,19 +33,22 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 	protected List<Cache> caches = new ArrayList<Cache>();
 	protected UserIdManager idManager;
 	protected Properties properties;
+	protected boolean ignoreErrors = false;
 	
+	private Shell appShell;
 
 	// format options
 	protected boolean includeLogs;
 
 
-	public Progress(ListSearcher search, Login login, UserIdManager man, Properties props)
+	public Progress(ListSearcher search, Login login, UserIdManager man, Properties props, Shell appShell)
 	{
 		this.searcher = search;
 		this.login = login;
 		this.idManager = man;
 		this.searcher.registerSearchCallback(this);
 		this.properties = props;
+		this.appShell = appShell;
 	}
 
 
@@ -50,7 +56,7 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 	 * @see org.geoscrape.SearchCallback#found(org.geoscrape.Cache)
 	 */
 	@Override
-	public void found(Cache cache)
+	public void found(final Cache cache)
 	{
 		if (this.monitor.isCanceled())
 		{
@@ -100,6 +106,27 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 					{
 						System.out.println("Problem with cache " + cache.getCacheCode());
 						e.printStackTrace();
+						if (!ignoreErrors)
+						{
+							Display.getDefault().syncExec(new Runnable()
+							{
+								public void run()
+								{
+									ParsingErrorDialog ped = new ParsingErrorDialog(appShell, cache.getCacheCode());
+									ped.open();
+									if (ped.isDoCancel())
+									{
+										// user wants to terminate search
+										searcher.abort();
+									}
+									else if (ped.isDoContinue())
+									{
+										// user don't want to cancel
+										ignoreErrors = ped.isDoIgnore();
+									}
+								}
+							});
+						}
 					}
 					monitor.subTask("Found " + caches.size() + " matching caches.");
 				}

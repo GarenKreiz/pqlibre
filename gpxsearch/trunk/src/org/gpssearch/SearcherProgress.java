@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.Shell;
 import org.geoscrape.Attribute;
 import org.geoscrape.Cache;
 import org.geoscrape.CacheSize;
@@ -59,9 +60,9 @@ public class SearcherProgress extends Progress
 	 * @param man
 	 * @param props
 	 */
-	public SearcherProgress(ListSearcher search, Login login, UserIdManager man, Properties props)
+	public SearcherProgress(ListSearcher search, Login login, UserIdManager man, Properties props,Shell shell)
 	{
-		super(search, login, man, props);
+		super(search, login, man, props,shell);
 		parseProperties();
 	}
 

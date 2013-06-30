@@ -1353,15 +1353,15 @@ public class MainDialog extends Dialog
 					{
 						if (sel[0].equals(tabSearch))
 						{
-							progr = new SearcherProgress(searcher, login, idManager, props);
+							progr = new SearcherProgress(searcher, login, idManager, props,getShell());
 						}
 						else if (sel[0].equals(tabMyfinds))
 						{
-							progr = new MyCachesProgress(searcher, login, idManager, props);
+							progr = new MyCachesProgress(searcher, login, idManager, props,getShell());
 						}
 						else if(sel[0].equals(tabMyhides))
 						{
-							progr = new MyHidesProgress(searcher, login, idManager, props);
+							progr = new MyHidesProgress(searcher, login, idManager, props,getShell());
 						}
 						ProgressMonitorDialog progdialog = new ProgressMonitorDialog(getShell());
 						progdialog.run(true, true, progr);

@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.Shell;
 import org.geoscrape.Cache;
 import org.geoscrape.Cacher;
 import org.geoscrape.ListSearcher;
@@ -26,9 +27,9 @@ public class MyHidesProgress extends Progress
 	 * @param login
 	 * @param man
 	 */
-	public MyHidesProgress(ListSearcher search, Login login, UserIdManager man, Properties props)
+	public MyHidesProgress(ListSearcher search, Login login, UserIdManager man, Properties props,Shell shell)
 	{
-		super(search, login, man, props);
+		super(search, login, man, props,shell);
 		// check if we're doing a search for my caches or the caches of another
 		// user
 		if (Boolean.parseBoolean(properties.getProperty("btnMineHides")))

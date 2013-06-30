@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.widgets.Shell;
 import org.geoscrape.Cache;
 import org.geoscrape.CacheLog;
 import org.geoscrape.Cacher;
@@ -27,9 +28,9 @@ public class MyCachesProgress extends Progress
 	 * @param login
 	 * @param man
 	 */
-	public MyCachesProgress(ListSearcher search, Login login, UserIdManager man, Properties props)
+	public MyCachesProgress(ListSearcher search, Login login, UserIdManager man, Properties props,Shell shell)
 	{
-		super(search, login, man, props);
+		super(search, login, man, props,shell);
 		// check if we're doing a search for my caches or the caches of another
 		// user
 		if (Boolean.parseBoolean(properties.getProperty("btnMine")))
