@@ -13,6 +13,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FormAttachment;
@@ -22,6 +24,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -33,7 +36,7 @@ import org.geoscrape.Attribute;
  * included in a search.
  * 
  */
-public class AttributeDialog extends Dialog
+public class AttributeDialog extends Dialog implements SelectionListener
 {
 
 	protected Object result;
@@ -43,6 +46,7 @@ public class AttributeDialog extends Dialog
 	private List<Button> includeList = new ArrayList<Button>();
 	private List<Button> excludeList = new ArrayList<Button>();
 	private List<Button> ignoreList = new ArrayList<Button>();
+	private List<List<Control>> controlList = new ArrayList<List<Control>>();
 
 	/**
 	 * Create the dialog.
@@ -186,6 +190,8 @@ public class AttributeDialog extends Dialog
 		for (Attribute a : Attribute.values())
 		{
 			attributes.add(a);
+			List<Control>controls  = new ArrayList<Control>();
+			controlList.add(controls);
 			
 			Label imgLbl = new Label(composite_2,SWT.NONE);
 			String imageName = AttributeImageMap.getAttributFileName(a)+".png";
@@ -224,23 +230,98 @@ public class AttributeDialog extends Dialog
 			new Label(composite_1, SWT.NONE);
 			includeList.add(includeButton);
 			GuiTools.applyDefaultFontSize(includeButton);
+			includeButton.addSelectionListener(this);
 
 			Button excludeButton = new Button(composite_1, SWT.RADIO);
 			new Label(composite_1, SWT.NONE);
 			excludeList.add(excludeButton);
 			GuiTools.applyDefaultFontSize(excludeButton);
+			excludeButton.addSelectionListener(this);
 
 			Button ignoreButton = new Button(composite_1, SWT.RADIO);
 			ignoreButton.setSelection(true);
 			ignoreList.add(ignoreButton);
 			GuiTools.applyDefaultFontSize(ignoreButton);
+			ignoreButton.addSelectionListener(this);
+
+			controls.add(imgLbl);
+			controls.add(lblFoo);
+			controls.add(composite_1);
+			controls.add(includeButton);
+			controls.add(excludeButton);
+			controls.add(ignoreButton);
+			
 		}
 		scrolledComposite.setContent(composite_2);
 		scrolledComposite.setMinSize(composite_2.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 
 		// set the properties
 		applyProperties();
+		
+		updateCategories();
 
+	}
+
+	@Override
+	public void widgetSelected(SelectionEvent e)
+	{
+		//the button has been selected, trigger an update
+		if(((Button)e.getSource()).getSelection())
+		{
+			updateCategories();						
+		}
+	}
+
+	@Override
+	public void widgetDefaultSelected(SelectionEvent e)
+	{					
+	}
+
+	private void updateCategories()
+	{
+		for (int x = 0; x < attributes.size() - 1; x++)
+		{
+
+			Attribute a1 = attributes.get(x);
+			for (int y = x + 1; y < attributes.size(); y++)
+			{
+				Attribute a2 = attributes.get(y);
+				if (a1.getId() == a2.getId() && a1.getInc() != a2.getInc())
+				{
+					if (includeList.get(x).getSelection() && includeList.get(y).getSelection())
+					{
+						highlightLine(x, true);
+						highlightLine(y, true);
+					}
+					else
+					{
+						highlightLine(x, false);
+						highlightLine(y, false);
+					}
+				}
+			}
+		}
+	}
+	
+	/**
+	 * Highlight the given line.
+	 * 
+	 * @param line
+	 */
+	private void highlightLine(int line, boolean highlight)
+	{
+		List<Control> controls = controlList.get(line);
+		for (Control w : controls)
+		{
+			if (highlight)
+			{
+				w.setBackground(new Color(null, 255, 80, 80));
+			}
+			else
+			{
+				w.setBackground(null);
+			}
+		}
 	}
 
 	/**
