@@ -369,7 +369,7 @@ public class SearcherProgress extends Progress
 		{
 			return false;
 		}
-		if (checkFoundDate && cache.getLastFoundDate() < lastFoundDate)
+		if (checkFoundDate && (cache.getLastFoundDate() == null || cache.getLastFoundDate() < lastFoundDate))
 		{
 			return false;
 		}

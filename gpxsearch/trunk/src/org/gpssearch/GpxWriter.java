@@ -33,7 +33,7 @@ public class GpxWriter implements IRunnableWithProgress
 	private UserIdManager idManager;
 	private String fileName;
 
-	public GpxWriter(List<Cache> caches, UserIdManager man,String fileName)
+	public GpxWriter(List<Cache> caches, UserIdManager man, String fileName)
 	{
 		this.caches = caches;
 		this.idManager = man;
@@ -41,10 +41,9 @@ public class GpxWriter implements IRunnableWithProgress
 
 	}
 
-
 	/**
 	 * @param file
-	 * @param monitor 
+	 * @param monitor
 	 * @throws IOException
 	 */
 	public void write(File file, IProgressMonitor monitor) throws IOException
@@ -52,7 +51,7 @@ public class GpxWriter implements IRunnableWithProgress
 		OutputStream os = new FileOutputStream(file);
 		try
 		{
-			write(os,monitor);
+			write(os, monitor);
 		}
 		catch (SAXException e)
 		{
@@ -70,7 +69,7 @@ public class GpxWriter implements IRunnableWithProgress
 	 * @throws IOException
 	 * @throws SAXException
 	 */
-	public void write(OutputStream os,IProgressMonitor monitor) throws IOException, SAXException
+	public void write(OutputStream os, IProgressMonitor monitor) throws IOException, SAXException
 	{
 		OutputFormat of = new OutputFormat("XML", "UTF-8", true);
 		of.setIndent(1);
@@ -132,14 +131,14 @@ public class GpxWriter implements IRunnableWithProgress
 		atts.addAttribute("", "", "maxlon", "", Double.toString(maxLon));
 		hd.startElement("", "", "bounds", atts);
 		hd.endElement("", "", "bounds");
-		
+
 		int totalCaches = caches.size();
 		int cacheCount = 0;
 
 		// add all the logs
 		for (Cache c : caches)
 		{
-			if(monitor.isCanceled())
+			if (monitor.isCanceled())
 			{
 				break;
 			}
@@ -150,7 +149,7 @@ public class GpxWriter implements IRunnableWithProgress
 				// skip premium caches if we are not a premium user
 				continue;
 			}
-			monitor.subTask("Saving cache " + cacheCount+"/"+totalCaches);
+			monitor.subTask("Saving cache " + cacheCount + "/" + totalCaches);
 			// add coordinates
 			atts.clear();
 			atts.addAttribute("", "", "lat", "", c.getLocation().getLatitude().toDecimalString());
@@ -216,6 +215,7 @@ public class GpxWriter implements IRunnableWithProgress
 			putElement(hd, "groundspeak:owner", c.getHider().getName(), atts);
 			putElement(hd, "groundspeak:type", cacheType);
 			putElement(hd, "groundspeak:container", c.getCacheSize().toString());
+			putElement(hd, "groundspeak:favorite_points", Integer.toString(c.getFavourited()));
 			hd.startElement("", "", "groundspeak:attributes", null);
 
 			for (Attribute a : c.getAttributes())
@@ -319,7 +319,7 @@ public class GpxWriter implements IRunnableWithProgress
 		{
 			try
 			{
-				char [] contentChars = content.toCharArray();
+				char[] contentChars = content.toCharArray();
 				hd.characters(contentChars, 0, contentChars.length);
 			}
 			catch (Exception e)
@@ -336,16 +336,16 @@ public class GpxWriter implements IRunnableWithProgress
 	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 	{
-		monitor.beginTask("Writing output...",caches.size());
+		monitor.beginTask("Writing output...", caches.size());
 		try
 		{
-			write(new File(fileName),monitor);
+			write(new File(fileName), monitor);
 		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 		monitor.done();
-		
+
 	}
 }
