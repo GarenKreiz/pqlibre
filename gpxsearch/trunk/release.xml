@@ -3,7 +3,7 @@
     <!--this file was created by Eclipse Runnable JAR Export Wizard-->
     <!--ANT 1.7 is required                                        -->
 	<!-- if you want to build PQ Libre with other versions of the dependencies than what is listed here you must edit this file. -->
-	<property name="build.version" value="0.8"/>
+	<property name="build.version" value="0.8.1"/>
 	<property environment="env"/>
     <target name="create_run_jar">
         <jar destfile="build/pqlibre.jar">
