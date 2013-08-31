@@ -8,12 +8,12 @@ When running on the command line the program works just like it does when run no
 = Windows =
   # Click the "Start" button.
   # Click in the search field.
-  # Type "`cmd`"  (without the quotes) and press enter.
-  # Navigate to the folder where you downloaded PQLibre, for example "`cd Downloads`" (without the quotes).
-  # Run the program: "`java -jar pqlibre0.8.1-winXX.jar`" (without the quotes, replace XX with the version you are using, either 32 or 64).
-  # If you get the message "'java' is not recognized as an internal or external command, operable program or batch file.", try using this command: "`"C:\Program Files (x86)\Java\jre7\bin\java.exe" -jar pqlibre0.8.1-winXX.jar`" 
+  # Type *cmd* and press enter.
+  # Navigate to the folder where you downloaded PQLibre by using the *cd* command, for example *cd Downloads*
+  # Run the program: *java -jar pqlibre0.8.1-winXX.jar* (replace XX with the version you are using, either 32 or 64).
+  # If you get the message "'java' is not recognized as an internal or external command, operable program or batch file.", try using this command: *"C:\Program Files (x86)\Java\jre7\bin\java.exe" -jar pqlibre0.8.1-winXX.jar* (replace XX with the version you are using, either 32 or 64).
 
 = Linux =
   # Open a terminal window, for example *xterm*.
-  # Navigate to the directory where the pqlibre jar file is stored, for example "`cd ~/jarfiles`" (without the quotes).
-  # Run the program: "`java -jar pqlibre0.8.1-linuxXX.jar`" (without the quotes, replace XX with the version you are using, either 32 or 64).
+  # Navigate to the directory where the pqlibre jar file is stored, for example *cd ~/jarfiles*
+  # Run the program: *java -jar pqlibre0.8.1-linuxXX.jar* ( replace XX with the version you are using, either 32 or 64).
