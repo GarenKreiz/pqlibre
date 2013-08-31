@@ -45,3 +45,6 @@ This page will tell you how to get started.
 
   * Q: The program crashed or did something else unexpected.
    A: There are still bugs. Please help us help you by submitting a bug report using the [http://code.google.com/p/pqlibre/issues/list "Issues"] link, above.
+
+  * Q: How can I run PQLibre from the command line?
+   A: By following [RunningCommandLine this tutorial].
