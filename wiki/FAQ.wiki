@@ -50,4 +50,4 @@
 
 
   __*Q*: How do I make it as easy as possible for you to fix the bug I discovered?
-   __*A*: By emailing us the `.gpxexporter.properties` file you can find in your home directory.
+   __*A*: By emailing us the `.gpxexporter.properties` file you can find in your home directory. Also, try [RunningCommandLine running PQLibre from the command line] and tell us what the result is.
