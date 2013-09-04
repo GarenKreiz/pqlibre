@@ -1,5 +1,6 @@
 package org.gpssearch;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -27,9 +28,9 @@ public class MyHidesProgress extends Progress
 	 * @param login
 	 * @param man
 	 */
-	public MyHidesProgress(ListSearcher search, Login login, UserIdManager man, Properties props,Shell shell)
+	public MyHidesProgress(ListSearcher search, File outputFile, Login login, UserIdManager man, Properties props,Shell shell)
 	{
-		super(search, login, man, props,shell);
+		super(search, outputFile, login, man, props,shell);
 		// check if we're doing a search for my caches or the caches of another
 		// user
 		if (Boolean.parseBoolean(properties.getProperty("btnMineHides")))
@@ -117,7 +118,7 @@ public class MyHidesProgress extends Progress
 		monitor.beginTask("Preparing search...", 100);
 		try
 		{
-			searcher.findCachesOwnedBy(new Cacher(this.targetUser),this.maxFind);
+			searcher.findCachesOwnedBy(new Cacher(this.targetUser),0,false);
 		}
 		catch (IOException e)
 		{

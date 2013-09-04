@@ -1,8 +1,10 @@
 package org.gpssearch;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -30,10 +32,11 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 	protected Login login;
 	protected IProgressMonitor monitor;
 	protected int lastPercentage = 0;
-	protected List<Cache> caches = new ArrayList<Cache>();
 	protected UserIdManager idManager;
 	protected Properties properties;
 	protected boolean ignoreErrors = false;
+	protected int count = 0;
+	private ObjectOutputStream outputStream;
 	
 	private Shell appShell;
 
@@ -41,7 +44,7 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 	protected boolean includeLogs;
 
 
-	public Progress(ListSearcher search, Login login, UserIdManager man, Properties props, Shell appShell)
+	public Progress(ListSearcher search, File outputFile, Login login, UserIdManager man, Properties props, Shell appShell) 
 	{
 		this.searcher = search;
 		this.login = login;
@@ -49,6 +52,15 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 		this.searcher.registerSearchCallback(this);
 		this.properties = props;
 		this.appShell = appShell;
+		try
+		{
+			outputStream = new ObjectOutputStream(new FileOutputStream(outputFile));
+		}
+		catch (Exception e)
+		{
+			//TODO: Figure out what the hell we do now
+			e.printStackTrace();
+		}
 	}
 
 
@@ -68,14 +80,19 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 			// calculate percentage, if we can
 			if (totalCaches != null)
 			{
-				int percentage = (int) Math.round(100.0 * found / totalCaches);
+				int countSoFar = found;
+				if(maxFind!=0)
+				{
+					countSoFar = count+1;
+				}
+				int percentage = (int) Math.round(100.0 * countSoFar / totalCaches);
 				int diff = percentage - lastPercentage;
 				if (diff > 0)
 				{
 					monitor.worked(diff);
 					lastPercentage = percentage;
 				}
-				monitor.setTaskName("Checking cache " + found + "/" + totalCaches);
+				monitor.setTaskName("Checking cache " + countSoFar + "/" + totalCaches);
 			}
 			// check if it fits pre-download criteria
 			if (checkPreDownload(cache))
@@ -91,7 +108,9 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 						if (checkPostDownload(cache))
 						{
 							// if so, save cache to list
-							caches.add(cache);
+							outputStream.writeObject(cache);
+							//increment counter
+							count++;
 							// put all id logs in cache
 							for (CacheLog log : cache.getLogs())
 							{
@@ -99,6 +118,11 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 								{
 									idManager.setId(log.getLoggedBy(), log.getLoggedBy().getId());
 								}
+							}
+
+							if (maxFind > 0 && count >= maxFind)
+							{
+								searcher.abort();
 							}
 						}
 					}
@@ -128,7 +152,7 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 							});
 						}
 					}
-					monitor.subTask("Found " + caches.size() + " matching caches.");
+					monitor.subTask("Found " + count + " matching caches.");
 				}
 				catch (Exception e)
 				{
@@ -151,6 +175,21 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 	 * @return
 	 */
 	protected abstract boolean checkPreDownload(Cache cache);
+	
+	/**
+	 * Close the object output stream.
+	 */
+	public void closeFile()
+	{
+		try
+		{
+			this.outputStream.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
 
 
 	/**
@@ -159,7 +198,18 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 	@Override
 	public void totalNumber(int n)
 	{
-		totalCaches = n;
+		if(maxFind == 0)
+		{
+			totalCaches = n;
+		}
+		else
+		{
+			totalCaches = Math.min(maxFind, n);
+			if(n < maxFind)
+			{
+				maxFind = 0;
+			}
+		}
 		monitor.setTaskName("Populating caches...");
 	}
 
@@ -169,9 +219,14 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 	public abstract void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException;
 	
 
-	public List<Cache> getCaches()
+
+
+	/**
+	 * @return
+	 */
+	public int getCount()
 	{
-		return this.caches;
+		return count;
 	}
 
 }

@@ -1,5 +1,6 @@
 package org.gpssearch;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -60,9 +61,9 @@ public class SearcherProgress extends Progress
 	 * @param man
 	 * @param props
 	 */
-	public SearcherProgress(ListSearcher search, Login login, UserIdManager man, Properties props,Shell shell)
+	public SearcherProgress(ListSearcher search, File outputFile,Login login, UserIdManager man, Properties props,Shell shell)
 	{
-		super(search, login, man, props,shell);
+		super(search,outputFile, login, man, props,shell);
 		parseProperties();
 	}
 
@@ -322,12 +323,6 @@ public class SearcherProgress extends Progress
 	 */
 	protected boolean checkPreDownload(Cache cache)
 	{
-
-		if (maxFind > 0 && caches.size() >= maxFind)
-		{
-			searcher.abort();
-			return false;
-		}
 		// check things that can be checked before complete cache download:
 		// - number of favourite points
 		if (checkFavouritePoints && cache.getFavourited() < minFavPoints)
@@ -460,7 +455,7 @@ public class SearcherProgress extends Progress
 		boolean ignoreFoundAndOwn = ignoreFound & ignoreOwn;
 		try
 		{
-			searcher.findCachesCloseTo(loc, radius, ignoreFoundAndOwn);
+			searcher.findCachesCloseTo(loc, radius, ignoreFoundAndOwn,0,false);
 		}
 		catch (IOException e)
 		{

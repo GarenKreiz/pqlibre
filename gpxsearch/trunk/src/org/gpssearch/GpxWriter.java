@@ -1,13 +1,14 @@
 package org.gpssearch;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,13 +30,15 @@ import com.sun.org.apache.xml.internal.serialize.XMLSerializer;
  */
 public class GpxWriter implements IRunnableWithProgress
 {
-	private List<Cache> caches;
 	private UserIdManager idManager;
 	private String fileName;
+	private int cacheCount;
+	private File cacheFile;
 
-	public GpxWriter(List<Cache> caches, UserIdManager man, String fileName)
+	public GpxWriter(int cacheCount,File cacheFile, UserIdManager man, String fileName)
 	{
-		this.caches = caches;
+		this.cacheCount = cacheCount;
+		this.cacheFile = cacheFile;
 		this.idManager = man;
 		this.fileName = fileName;
 
@@ -57,6 +60,10 @@ public class GpxWriter implements IRunnableWithProgress
 		{
 			throw new IOException(e);
 		}
+		catch (ClassNotFoundException e)
+		{
+			throw new IOException(e);
+		}
 		finally
 		{
 			os.close();
@@ -68,8 +75,9 @@ public class GpxWriter implements IRunnableWithProgress
 	 * @param os
 	 * @throws IOException
 	 * @throws SAXException
+	 * @throws ClassNotFoundException 
 	 */
-	public void write(OutputStream os, IProgressMonitor monitor) throws IOException, SAXException
+	public void write(OutputStream os, IProgressMonitor monitor) throws IOException, SAXException, ClassNotFoundException
 	{
 		OutputFormat of = new OutputFormat("XML", "UTF-8", true);
 		of.setIndent(1);
@@ -113,8 +121,10 @@ public class GpxWriter implements IRunnableWithProgress
 		double minLon = Double.POSITIVE_INFINITY;
 		double maxLat = Double.NEGATIVE_INFINITY;
 		double maxLon = Double.NEGATIVE_INFINITY;
-		for (Cache c : caches)
+		ObjectInputStream input = new ObjectInputStream(new FileInputStream(cacheFile));
+		for (int x = 0;x<cacheCount;x++)
 		{
+			Cache c = (Cache)input.readObject();
 			if (!c.isUnavailableToUs())
 			{
 				double lat = c.getLocation().getLatitude().getDegreeWithFraction();
@@ -125,6 +135,7 @@ public class GpxWriter implements IRunnableWithProgress
 				maxLon = Math.max(maxLon, lon);
 			}
 		}
+		input.close();
 		atts.clear();
 		atts.addAttribute("", "", "minlat", "", Double.toString(minLat));
 		atts.addAttribute("", "", "minlon", "", Double.toString(minLon));
@@ -133,12 +144,14 @@ public class GpxWriter implements IRunnableWithProgress
 		hd.startElement("", "", "bounds", atts);
 		hd.endElement("", "", "bounds");
 
-		int totalCaches = caches.size();
+		int totalCaches = cacheCount;
 		int cacheCount = 0;
 
 		// add all the logs
-		for (Cache c : caches)
+		input = new ObjectInputStream(new FileInputStream(cacheFile));
+		for (int x = 0;x<cacheCount;x++)
 		{
+			Cache c = (Cache)input.readObject();
 			if (monitor.isCanceled())
 			{
 				break;
@@ -304,6 +317,7 @@ public class GpxWriter implements IRunnableWithProgress
 
 			}
 		}
+		input.close();
 		hd.endElement("", "", "gpx");
 		hd.endDocument();
 	}
@@ -337,7 +351,7 @@ public class GpxWriter implements IRunnableWithProgress
 	@Override
 	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
 	{
-		monitor.beginTask("Writing output...", caches.size());
+		monitor.beginTask("Writing output...", cacheCount);
 		try
 		{
 			write(new File(fileName), monitor);

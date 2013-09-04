@@ -12,7 +12,6 @@ import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
@@ -41,7 +40,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolTip;
-import org.geoscrape.Cache;
 import org.geoscrape.ListSearcher;
 import org.geoscrape.Location;
 import org.geoscrape.Login;
@@ -207,7 +205,7 @@ public class MainDialog extends Dialog
 	protected void configureShell(Shell shell)
 	{
 		super.configureShell(shell);
-		shell.setText("PQLibre 0.8.1 (beta)");
+		shell.setText("PQLibre 0.8.2 (beta)");
 		shell.setImages(this.images);
 		int desiredWidth = 665;
 		int desiredHeight = 710;
@@ -1349,27 +1347,32 @@ public class MainDialog extends Dialog
 					// start the search
 					ListSearcher searcher = new ListSearcher(login);
 					Progress progr = null;
+					//create a temporary file
+					File tmpFile = File.createTempFile("gpxsearchersearch", ".bin");
+					tmpFile.deleteOnExit();
 					if (sel.length > 0)
 					{
 						if (sel[0].equals(tabSearch))
 						{
-							progr = new SearcherProgress(searcher, login, idManager, props,getShell());
+							progr = new SearcherProgress(searcher,tmpFile, login, idManager, props,getShell());
 						}
 						else if (sel[0].equals(tabMyfinds))
 						{
-							progr = new MyCachesProgress(searcher, login, idManager, props,getShell());
+							progr = new MyCachesProgress(searcher,tmpFile, login, idManager, props,getShell());
 						}
 						else if(sel[0].equals(tabMyhides))
 						{
-							progr = new MyHidesProgress(searcher, login, idManager, props,getShell());
+							progr = new MyHidesProgress(searcher,tmpFile, login, idManager, props,getShell());
 						}
 						ProgressMonitorDialog progdialog = new ProgressMonitorDialog(getShell());
 						progdialog.run(true, true, progr);
-						List<Cache> caches = progr.getCaches();
+						progr.closeFile();
+						int count = progr.getCount();
 						ResultDialog resDiag = new ResultDialog(getShell(), SWT.APPLICATION_MODAL);
-						resDiag.open(caches, idManager, login.getUserName());
+						resDiag.open(count,tmpFile, idManager, login.getUserName());
 						idManager.saveDb();
 					}
+					tmpFile.delete();
 				}
 				catch (InvocationTargetException ex)
 				{

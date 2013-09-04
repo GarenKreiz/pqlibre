@@ -1,9 +1,11 @@
 package org.gpssearch.gui;
 
 import java.awt.Desktop;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import java.util.List;
 
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.SWT;
@@ -34,12 +36,13 @@ public class ResultDialog extends Dialog
 	private Button btnSaveFile;
 	private Button btnOpenInBrowser;
 	private Label resultText;
-	private List<Cache> caches;
 	private UserIdManager idManager;
 	private Desktop desktop;
 	private Button btnDisplayMap;
 
 	private String ourname;
+	private File cacheFile;
+	private int cacheCount;
 
 	/**
 	 * Create the dialog.
@@ -56,12 +59,19 @@ public class ResultDialog extends Dialog
 	/**
 	 * Open the dialog.
 	 * 
+	 * 
+	 * @param cacheCount the number of caches found.
+	 * @param cacheFile the file containing the serialised caches.
+	 * @param idManager the idManager.
+	 * @param ourname our login name.
+	 * 
 	 * @return the result
 	 */
-	public Object open(List<Cache> caches, UserIdManager idManager, String ourname)
+	public Object open(int cacheCount, File cacheFile, UserIdManager idManager, String ourname)
 	{
+		this.cacheCount = cacheCount;
+		this.cacheFile = cacheFile;
 		this.ourname = ourname;
-		this.caches = caches;
 		this.idManager = idManager;
 		createContents();
 
@@ -69,7 +79,7 @@ public class ResultDialog extends Dialog
 		{
 			desktop = Desktop.getDesktop();
 		}
-		if (caches.size() > 0)
+		if (cacheCount > 0)
 		{
 			btnSaveFile.setEnabled(true);
 			if (desktop != null)
@@ -83,13 +93,13 @@ public class ResultDialog extends Dialog
 					btnDisplayMap.setEnabled(true);
 				}
 			}
-			if (caches.size() == 1)
+			if (cacheCount == 1)
 			{
 				resultText.setText("Found 1 cache.");
 			}
 			else
 			{
-				resultText.setText("Found " + caches.size() + " caches.");
+				resultText.setText("Found " + cacheCount + " caches.");
 			}
 		}
 		shlSearchResults.open();
@@ -151,7 +161,7 @@ public class ResultDialog extends Dialog
 					}
 					try
 					{
-						GpxWriter writer = new GpxWriter(caches, idManager,outputName);
+						GpxWriter writer = new GpxWriter(cacheCount,cacheFile, idManager,outputName);
 						ProgressMonitorDialog progdialog = new ProgressMonitorDialog(shlSearchResults);
 						progdialog.run(true, true, writer);
 					}
@@ -179,11 +189,11 @@ public class ResultDialog extends Dialog
 			public void widgetSelected(SelectionEvent e)
 			{
 				boolean open = true;
-				if (caches.size() > 10)
+				if (cacheCount > 10)
 				{
 					MessageBox messageBox = new MessageBox(shlSearchResults, SWT.ICON_QUESTION | SWT.YES | SWT.NO);
 					messageBox.setMessage("You have asked to open "
-							+ caches.size()
+							+ cacheCount
 							+ " caches.\nSuch a large number of open windows or tabs can cause your computer to slow down or even crash your browser.\nDo you still want do do it?");
 					messageBox.setText("Opening a large number of caches.");
 					int response = messageBox.open();
@@ -194,16 +204,19 @@ public class ResultDialog extends Dialog
 				}
 				if (open)
 				{
-					for (Cache c : caches)
+					try
 					{
-						try
+						ObjectInputStream input = new ObjectInputStream(new FileInputStream(cacheFile));
+						for (int x = 0; x < cacheCount; x++)
 						{
+							Cache c = (Cache) input.readObject();
 							desktop.browse(new URI("http://coord.info/" + c.getCacheCode()));
 						}
-						catch (Exception e1)
-						{
-							e1.printStackTrace();
-						}
+						input.close();
+					}
+					catch (Exception e1)
+					{
+						e1.printStackTrace();
 					}
 				}
 			}
@@ -239,7 +252,7 @@ public class ResultDialog extends Dialog
 	 */
 	protected void displayMap()
 	{
-		MapGenerator mapGen = new MapGenerator(caches,ourname,desktop);
+		MapGenerator mapGen = new MapGenerator(cacheCount,cacheFile,ourname,desktop);
 		ProgressMonitorDialog progdialog = new ProgressMonitorDialog(shlSearchResults);
 		try
 		{

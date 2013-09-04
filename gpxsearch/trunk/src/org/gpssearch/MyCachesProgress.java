@@ -1,5 +1,6 @@
 package org.gpssearch;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.text.ParseException;
@@ -28,9 +29,9 @@ public class MyCachesProgress extends Progress
 	 * @param login
 	 * @param man
 	 */
-	public MyCachesProgress(ListSearcher search, Login login, UserIdManager man, Properties props,Shell shell)
+	public MyCachesProgress(ListSearcher search, File outputFile, Login login, UserIdManager man, Properties props,Shell shell)
 	{
-		super(search, login, man, props,shell);
+		super(search, outputFile, login, man, props,shell);
 		// check if we're doing a search for my caches or the caches of another
 		// user
 		if (Boolean.parseBoolean(properties.getProperty("btnMine")))
@@ -153,7 +154,7 @@ public class MyCachesProgress extends Progress
 		monitor.beginTask("Preparing search...", 100);
 		try
 		{
-			searcher.findCachesFoundBy(new Cacher(this.targetUser), this.maxFind);
+			searcher.findCachesFoundBy(new Cacher(this.targetUser), 0,false);
 		}
 		catch (IOException e)
 		{

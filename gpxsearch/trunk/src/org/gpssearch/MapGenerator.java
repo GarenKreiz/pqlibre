@@ -3,12 +3,13 @@ package org.gpssearch;
 import java.awt.Desktop;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -30,23 +31,25 @@ import org.geoscrape.util.WebClient;
 public class MapGenerator implements IRunnableWithProgress
 {
 
-	private List<Cache> caches;
 	private String ourname;
 	private Desktop desktop;
+	private File cacheFile;
+	private int cacheCount;
 
 	/**
 	 * Create a new map generator.
 	 * 
-	 * @param caches
-	 *            the caches to generate a map for.
+	 * @param cacheCount the number of caches to generate a map for.
+	 * @param cacheFile the file containing the serialised caches.
 	 * @param ourname
 	 *            the name of the user that owns the caches to be marked with an
 	 *            "our" icon.
 	 * @param desktop
 	 */
-	public MapGenerator(List<Cache> caches, String ourname, Desktop desktop)
+	public MapGenerator(int cacheCount, File cacheFile, String ourname, Desktop desktop)
 	{
-		this.caches = caches;
+		this.cacheCount = cacheCount;
+		this.cacheFile = cacheFile;
 		this.ourname = ourname;
 		this.desktop = desktop;
 	}
@@ -63,10 +66,12 @@ public class MapGenerator implements IRunnableWithProgress
 		try
 		{
 			monitor.subTask("Generating description...");
+			ObjectInputStream input = new ObjectInputStream(new FileInputStream(cacheFile));
 			String newline = "\n";
 			StringBuilder url = new StringBuilder("name,desc,lat,lon,icon_size,sym");
-			for (Cache c : caches)
+			for(int x = 0;x<cacheCount;x++)
 			{
+				Cache c = (Cache)input.readObject();
 				StringBuilder tmp = new StringBuilder(newline);
 				tmp.append(escape(c.getName()));
 				tmp.append(",");
@@ -94,6 +99,7 @@ public class MapGenerator implements IRunnableWithProgress
 
 				url.append(tmp);
 			}
+			input.close();
 			monitor.subTask("Compressing description...");
 			monitor.worked(10);
 			// compress the string
