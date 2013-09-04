@@ -145,7 +145,6 @@ public class GpxWriter implements IRunnableWithProgress
 		hd.endElement("", "", "bounds");
 
 		int totalCaches = cacheCount;
-		int cacheCount = 0;
 
 		// add all the logs
 		input = new ObjectInputStream(new FileInputStream(cacheFile));
@@ -157,13 +156,12 @@ public class GpxWriter implements IRunnableWithProgress
 				break;
 			}
 			monitor.worked(1);
-			cacheCount++;
 			if (c.isUnavailableToUs())
 			{
 				// skip premium caches if we are not a premium user
 				continue;
 			}
-			monitor.subTask("Saving cache " + cacheCount + "/" + totalCaches);
+			monitor.subTask("Saving cache " + (x+1) + "/" + totalCaches);
 			// add coordinates
 			atts.clear();
 			atts.addAttribute("", "", "lat", "", c.getLocation().getLatitude().toDecimalString());
