@@ -109,6 +109,7 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 						{
 							// if so, save cache to list
 							outputStream.writeObject(cache);
+							outputStream.reset();
 							//increment counter
 							count++;
 							// put all id logs in cache
