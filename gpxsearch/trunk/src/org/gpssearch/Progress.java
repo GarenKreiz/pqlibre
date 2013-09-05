@@ -109,6 +109,7 @@ public abstract class Progress implements IRunnableWithProgress, SearchCallback
 						{
 							// if so, save cache to list
 							outputStream.writeObject(cache);
+							// stop ObjectOutputStream from saving a strong reference to every object it stores
 							outputStream.reset();
 							//increment counter
 							count++;

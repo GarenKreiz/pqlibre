@@ -107,7 +107,7 @@ public class ParsingErrorDialog extends Dialog
 		
 		Label lblNewLabel = new Label(shlParsingError, SWT.CENTER);
 		GuiTools.applyFontSize(lblNewLabel,12);
-		lblNewLabel.setBounds(10, 31, 425, 15);
+		lblNewLabel.setBounds(10, 31, 425, 38);
 		lblNewLabel.setText(this.cacheCode);
 		
 		Label lblWhatWouldYou = new Label(shlParsingError, SWT.CENTER);
