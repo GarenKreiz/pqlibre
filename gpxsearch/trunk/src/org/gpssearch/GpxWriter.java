@@ -332,6 +332,7 @@ public class GpxWriter implements IRunnableWithProgress
 		{
 			try
 			{
+				content = replaceNonPrintable(content);
 				char[] contentChars = content.toCharArray();
 				hd.characters(contentChars, 0, contentChars.length);
 			}
@@ -343,6 +344,20 @@ public class GpxWriter implements IRunnableWithProgress
 		hd.endElement("", "", name);
 	}
 
+	/**
+	 * Replace all non-printable characters with blanks or printable eqivalent.
+	 * @param input
+	 * @return
+	 */
+	private String replaceNonPrintable(String input)
+	{
+		input = input.replaceAll("\u0007", "\u2407");//bell
+		input = input.replaceAll("\u0008", "");//backspace
+		input = input.replaceAll("\u001B", "\u241B");//esc
+		input = input.replaceAll("\u007F", "");//del
+		return input;
+	}
+	
 	/**
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -361,4 +376,5 @@ public class GpxWriter implements IRunnableWithProgress
 		monitor.done();
 
 	}
+	
 }
