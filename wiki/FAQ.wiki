@@ -43,10 +43,10 @@
 
 
   __*Q*: I can't log in. 
-   __*A*: Are you using PQLibre version 0.2 or earlier and a language other than English on the geocaching.com website? If so, please upgrade. If that does not help, try switch your geocaching.com language setting to English by logging in using your browser and going to this page: [http://www.geocaching.com/account/ManagePreferences.aspx] and send us a bug report describing the problem in as much detail as possible.
+   __*A*: Are you using the latest PQLibre release? If not, please upgrade. If that does not help, try switch your geocaching.com language setting to English by logging in using your browser and going to this page: [http://www.geocaching.com/account/ManagePreferences.aspx] and send us a bug report describing the problem in as much detail as possible.
 
   __*Q*: It's not working! 
-   __*A*: Sorry to hear that. Please email us or, even better, create a bug report using the "Issues" tab. When you do, please describe the problem in as great detail as possible. Include information about what OS you are using, what version of the OS, and what version of Java you are using. Describe the exact steps you followed to produce the problem, and exactly what happens when you encounter the problem. If possible, please include the `.gpxexporter.properties` file you can find in your home directory. The more details you include, the faster we can fix the problem. Thanks!
+   __*A*: Sorry to hear that. Please email us or, even better, create a bug report using the "Issues" tab. When you do, please describe the problem in as great detail as possible. Include information about what OS you are using, what version of the OS, and what version of Java you are using. Describe the exact steps you followed to produce the problem, and exactly what happens when you encounter the problem. If possible, please include the `.gpxexporter.properties` file you can find in your home directory. Also, try [RunningCommandLine running PQLibre from the command line] and tell us what the result is. The more details you include, the faster we can fix the problem. Thanks!
 
 
   __*Q*: How do I make it as easy as possible for you to fix the bug I discovered?
