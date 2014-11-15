@@ -61,9 +61,10 @@ public class SearcherProgress extends Progress
 	 * @param man
 	 * @param props
 	 */
-	public SearcherProgress(ListSearcher search, File outputFile,Login login, UserIdManager man, Properties props,Shell shell)
+	public SearcherProgress(ListSearcher search, File outputFile, Login login,
+			UserIdManager man, Properties props, Shell shell)
 	{
-		super(search,outputFile, login, man, props,shell);
+		super(search, outputFile, login, man, props, shell);
 		parseProperties();
 	}
 
@@ -72,42 +73,51 @@ public class SearcherProgress extends Progress
 	 */
 	private void parseProperties()
 	{
-		SimpleDateFormat dateformat = new SimpleDateFormat(login.getDateFormat());
-		checkFavouritePoints = Boolean.parseBoolean(properties.getProperty("btnRequireFav", "false"));
+		SimpleDateFormat dateformat = new SimpleDateFormat(
+				login.getDateFormat());
+		checkFavouritePoints = Boolean.parseBoolean(properties.getProperty(
+				"btnRequireFav", "false"));
 		if (checkFavouritePoints)
 		{
-			minFavPoints = Integer.parseInt(properties.getProperty("favouritePoints"));
+			minFavPoints = Integer.parseInt(properties
+					.getProperty("favouritePoints"));
 		}
-		checkPlacedOnOrAfter = Boolean.parseBoolean(properties.getProperty("btnPlacedAfter", "false"));
+		checkPlacedOnOrAfter = Boolean.parseBoolean(properties.getProperty(
+				"btnPlacedAfter", "false"));
 		if (checkPlacedOnOrAfter)
 		{
 			try
 			{
-				afterTime = dateformat.parse(properties.getProperty("afterDateField")).getTime();
+				afterTime = dateformat.parse(
+						properties.getProperty("afterDateField")).getTime();
 			}
 			catch (ParseException e)
 			{
 				checkPlacedOnOrAfter = false;
 			}
 		}
-		checkPlacedOnOrBefore = Boolean.parseBoolean(properties.getProperty("btnPlacedBefore", "false"));
+		checkPlacedOnOrBefore = Boolean.parseBoolean(properties.getProperty(
+				"btnPlacedBefore", "false"));
 		if (checkPlacedOnOrBefore)
 		{
 			try
 			{
-				beforeTime = dateformat.parse(properties.getProperty("beforeDateField")).getTime();
+				beforeTime = dateformat.parse(
+						properties.getProperty("beforeDateField")).getTime();
 			}
 			catch (ParseException e)
 			{
 				checkPlacedOnOrBefore = false;
 			}
 		}
-		checkFoundDate = Boolean.parseBoolean(properties.getProperty("btnFoundInLast", "false"));
+		checkFoundDate = Boolean.parseBoolean(properties.getProperty(
+				"btnFoundInLast", "false"));
 		if (checkFoundDate)
 		{
 			try
 			{
-				int days = Integer.parseInt(properties.getProperty("foundInlastDaysField"));
+				int days = Integer.parseInt(properties
+						.getProperty("foundInlastDaysField"));
 				Calendar c = new GregorianCalendar();
 				c.add(Calendar.DATE, -days);
 				lastFoundDate = c.getTimeInMillis();
@@ -117,12 +127,18 @@ public class SearcherProgress extends Progress
 				checkFoundDate = false;
 			}
 		}
-		notFound = Boolean.parseBoolean(properties.getProperty("btnHasNotBeen", "false"));
-		checkTrackables = Boolean.parseBoolean(properties.getProperty("btnHasTrackable", "false"));
-		checkDisabled = Boolean.parseBoolean(properties.getProperty("btnIgnoreDisabled", "false"));
-		ignoreOwn = Boolean.parseBoolean(properties.getProperty("btnIgnoreOwn", "false"));
-		ignoreFound = Boolean.parseBoolean(properties.getProperty("btnIgnoreFound", "false"));
-		checkDT = Boolean.parseBoolean(properties.getProperty("btnFilterDifficultyterrain", "false"));
+		notFound = Boolean.parseBoolean(properties.getProperty("btnHasNotBeen",
+				"false"));
+		checkTrackables = Boolean.parseBoolean(properties.getProperty(
+				"btnHasTrackable", "false"));
+		checkDisabled = Boolean.parseBoolean(properties.getProperty(
+				"btnIgnoreDisabled", "false"));
+		ignoreOwn = Boolean.parseBoolean(properties.getProperty("btnIgnoreOwn",
+				"false"));
+		ignoreFound = Boolean.parseBoolean(properties.getProperty(
+				"btnIgnoreFound", "false"));
+		checkDT = Boolean.parseBoolean(properties.getProperty(
+				"btnFilterDifficultyterrain", "false"));
 		if (checkDT)
 		{
 			for (Object keyObj : properties.keySet())
@@ -138,7 +154,8 @@ public class SearcherProgress extends Progress
 			}
 		}
 
-		checkSize = Boolean.parseBoolean(properties.getProperty("btnFilterSize", "false"));
+		checkSize = Boolean.parseBoolean(properties.getProperty(
+				"btnFilterSize", "false"));
 		if (checkSize)
 		{
 			if (properties.getProperty("btnNotChosenSize").equals("true"))
@@ -175,7 +192,8 @@ public class SearcherProgress extends Progress
 			}
 		}
 
-		checkType = Boolean.parseBoolean(properties.getProperty("btnFilterType", "false"));
+		checkType = Boolean.parseBoolean(properties.getProperty(
+				"btnFilterType", "false"));
 		if (checkType)
 		{
 			if (properties.getProperty("btnCito").equals("true"))
@@ -229,7 +247,8 @@ public class SearcherProgress extends Progress
 			}
 		}
 
-		checkAttributes = Boolean.parseBoolean(properties.getProperty("btnFilterAttributes", "false"));
+		checkAttributes = Boolean.parseBoolean(properties.getProperty(
+				"btnFilterAttributes", "false"));
 		if (checkAttributes)
 		{
 			for (Object keyObj : properties.keySet())
@@ -255,13 +274,15 @@ public class SearcherProgress extends Progress
 			}
 		}
 
-		checkKeyword = Boolean.parseBoolean(properties.getProperty("btnMatchKeyword", "false"));
+		checkKeyword = Boolean.parseBoolean(properties.getProperty(
+				"btnMatchKeyword", "false"));
 		if (checkKeyword)
 		{
 			this.keyWord = properties.getProperty("keywordText", "");
 		}
 
-		includeLogs = Boolean.parseBoolean(properties.getProperty("btnIncludeLogs"));
+		includeLogs = Boolean.parseBoolean(properties
+				.getProperty("btnIncludeLogs"));
 	}
 
 	/**
@@ -364,7 +385,9 @@ public class SearcherProgress extends Progress
 		{
 			return false;
 		}
-		if (checkFoundDate && (cache.getLastFoundDate() == null || cache.getLastFoundDate() < lastFoundDate))
+		if (checkFoundDate
+				&& (cache.getLastFoundDate() == null || cache
+						.getLastFoundDate() < lastFoundDate))
 		{
 			return false;
 		}
@@ -401,7 +424,8 @@ public class SearcherProgress extends Progress
 			// check the title for keywords
 			if (keyWord != null)
 			{
-				if (!cache.getName().toLowerCase().contains(keyWord.toLowerCase()))
+				if (!cache.getName().toLowerCase()
+						.contains(keyWord.toLowerCase()))
 				{
 					return false;
 				}
@@ -410,7 +434,8 @@ public class SearcherProgress extends Progress
 		// - D/T
 		if (checkDT)
 		{
-			String dt = cache.getDifficultyRating() + "/" + cache.getTerrainRating();
+			String dt = cache.getDifficultyRating() + "/"
+					+ cache.getTerrainRating();
 			dt = dt.replaceAll("\\.0", "");
 			if (!this.acceptedDTCombos.contains(dt))
 			{
@@ -433,38 +458,49 @@ public class SearcherProgress extends Progress
 	 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException
+	public void run(IProgressMonitor monitor) throws InvocationTargetException,
+			InterruptedException
 	{
 		this.monitor = monitor;
 		monitor.beginTask("Preparing search...", 100);
-		this.maxFind = Integer.parseInt(properties.getProperty("maximumresults"));
-		Location loc = new Location(properties.getProperty("locationInput"));
-		double radius = Double.parseDouble(properties.getProperty("searchradius")) / 10.0;
-		// convert miles to km if we need to
-		boolean useMiles = false;
-		if (properties.getProperty("searchRadiusUnits") != null
-				&& properties.getProperty("searchRadiusUnits").equals("1"))
-		{
-			useMiles = true;
-		}
-		if (useMiles)
-		{
-			radius *= 1.609344;
-		}
-		// check if we ignore our own caches
-		boolean ignoreFoundAndOwn = ignoreFound & ignoreOwn;
+		this.maxFind = Integer.parseInt(properties
+				.getProperty("maximumresults"));
 		try
 		{
-			searcher.findCachesCloseTo(loc, radius, ignoreFoundAndOwn,0,false);
+			Location loc = new Location(properties.getProperty("locationInput"));
+			double radius = Double.parseDouble(properties
+					.getProperty("searchradius")) / 10.0;
+			// convert miles to km if we need to
+			boolean useMiles = false;
+			if (properties.getProperty("searchRadiusUnits") != null
+					&& properties.getProperty("searchRadiusUnits").equals("1"))
+			{
+				useMiles = true;
+			}
+			if (useMiles)
+			{
+				radius *= 1.609344;
+			}
+			// check if we ignore our own caches
+			boolean ignoreFoundAndOwn = ignoreFound & ignoreOwn;
+			try
+			{
+				searcher.findCachesCloseTo(loc, radius, ignoreFoundAndOwn, 0,
+						false);
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			catch (ParseException e)
+			{
+				e.printStackTrace();
+			}
+			monitor.done();
 		}
-		catch (IOException e)
+		catch (Exception e)
 		{
 			e.printStackTrace();
 		}
-		catch (ParseException e)
-		{
-			e.printStackTrace();
-		}
-		monitor.done();
 	}
 }
